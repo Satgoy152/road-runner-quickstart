@@ -1,73 +1,21 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-/**
- * This 2020-2021 OpMode illustrates the basics of using the TensorFlow Object Detection API to
- * determine the position of the Freight Frenzy game elements.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- *
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained below.
- */
-@Autonomous(name = "TensorFlow Object Detection", group = "Concept")
-public class Vuforia extends LinearOpMode {
-    /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
-     * the following 4 detectable objects
-     *  0: Ball,
-     *  1: Cube,
-     *  2: Duck,
-     *  3: Marker (duck location tape marker)
-     *
-     *  Two additional model assets are available which only contain a subset of the objects:
-     *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
-     *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
-     */
+@Autonomous(name = "Path copy", group = "Concept")
+public class Path1copy extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
             "Ball",
@@ -75,7 +23,6 @@ public class Vuforia extends LinearOpMode {
             "Duck",
             "Marker"
     };
-
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -102,18 +49,16 @@ public class Vuforia extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
+    SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
 
     @Override
-    public void runOpMode() {
-        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
+
+    public void runOpMode(){
+
+
         initVuforia();
         initTfod();
 
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
         if (tfod != null) {
             tfod.activate();
 
@@ -129,8 +74,138 @@ public class Vuforia extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
+
         waitForStart();
 
+        checkForDuck();
+
+        // parkingPath();
+        //fullPath();
+
+
+    }
+    public void parkingPath() {
+        Pose2d startPose = new Pose2d(0,0, Math.toRadians(90));
+        drivetrain.setPoseEstimate(startPose);
+        sleep(1000);
+        // senseing da things
+
+        Trajectory traj1 = drivetrain.trajectoryBuilder(startPose)
+                .lineToConstantHeading(new Vector2d(-41.5, 4))
+                .build();
+        drivetrain.followTrajectory(traj1);
+
+        // moves to the shipping thing
+
+
+        Trajectory traj2 = drivetrain.trajectoryBuilder(traj1.end())
+                .lineToLinearHeading(new Pose2d(-36, -25, Math.toRadians(270)))
+                .build();
+        drivetrain.followTrajectory(traj2);
+        // duck go brrr
+
+
+        sleep(1000);
+
+        Trajectory traj3 = drivetrain.trajectoryBuilder(traj2.end())
+                .lineToConstantHeading(new Vector2d(5.5, 69))
+                .build();
+        drivetrain.followTrajectory(traj3);
+// time to park
+
+        Trajectory traj4 = drivetrain.trajectoryBuilder(traj3.end())
+                .forward(31)
+                .build();
+        drivetrain.followTrajectory(traj4);
+// time to park
+    }
+
+    public void fullPath(){
+        Pose2d startPose = new Pose2d(0,0, Math.toRadians(90));
+        drivetrain.setPoseEstimate(startPose);
+
+        sleep(1000);
+        // senseing da things
+
+        Trajectory traj1 = drivetrain.trajectoryBuilder(startPose)
+                .lineToConstantHeading(new Vector2d(-41.5, 4))
+                .build();
+        drivetrain.followTrajectory(traj1);
+
+        // moves to the shipping thing
+
+
+        Trajectory traj2 = drivetrain.trajectoryBuilder(traj1.end())
+                .lineToLinearHeading(new Pose2d(-36, -25,Math.toRadians(270)))
+                .build();
+        drivetrain.followTrajectory(traj2);
+        // duck go brrr
+
+
+        sleep(1000);
+
+        Trajectory traj3 = drivetrain.trajectoryBuilder(traj2.end())
+                .lineToConstantHeading(new Vector2d(5.5, 69))
+                .build();
+        drivetrain.followTrajectory(traj3);
+// cycling
+
+        Trajectory traj4 = drivetrain.trajectoryBuilder(traj3.end())
+                .forward(31)
+                .build();
+        drivetrain.followTrajectory(traj4);
+
+
+        Trajectory traj5 = drivetrain.trajectoryBuilder(traj4.end())
+                .back(35)
+                .build();
+        drivetrain.followTrajectory(traj5);
+
+        Trajectory traj6 = drivetrain.trajectoryBuilder(traj5.end())
+                .strafeLeft(41.5)
+                .build();
+        drivetrain.followTrajectory(traj5);
+
+// time to park
+        Trajectory traj7 = drivetrain.trajectoryBuilder(traj6.end())
+                .strafeRight(41.5)
+                .build();
+        drivetrain.followTrajectory(traj7);
+
+        Trajectory traj8 = drivetrain.trajectoryBuilder(traj7.end())
+                .forward(35)
+                .build();
+        drivetrain.followTrajectory(traj8);
+
+    }
+
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 320;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    }
+
+    private void checkForDuck(){
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 if (tfod != null) {
@@ -154,7 +229,8 @@ public class Vuforia extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-
+                                fullPath();
+                                parkingPath();
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
 
@@ -174,37 +250,7 @@ public class Vuforia extends LinearOpMode {
             }
         }
     }
-
-    /**
-     * Initialize the Vuforia localization engine.
-     */
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 320;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-    }
-
 }
+
+
+
