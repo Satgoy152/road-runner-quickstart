@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous(name = "Path", group = "Concept")
+@Autonomous(name = "Path2", group = "Concept")
 public class ultimateGoalAuto extends LinearOpMode {
     @Override
     public void runOpMode(){
