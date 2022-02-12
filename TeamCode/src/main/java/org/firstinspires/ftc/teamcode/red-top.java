@@ -5,6 +5,9 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -49,9 +52,18 @@ public class Path1copy extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
-    SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+    private DcMotor teamMarkerMotor = null;
+    private DcMotor output = null;
+    private DcMotor input = null;
+
+    private Servo output2 = null;
+    private CRServo carouselArm = null;
+    private Servo teamMarkerServo = null;
+
 
     @Override
+
+
 
     public void runOpMode(){
 
@@ -71,6 +83,8 @@ public class Path1copy extends LinearOpMode {
             //tfod.setZoom(2.5, 16.0/9.0);
         }
 
+
+
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -79,46 +93,88 @@ public class Path1copy extends LinearOpMode {
 
         checkForDuck();
 
-        // parkingPath();
-        //fullPath();
+
+
 
 
     }
-    public void parkingPath() {
-        Pose2d startPose = new Pose2d(0,0, Math.toRadians(90));
-        drivetrain.setPoseEstimate(startPose);
+    public void path()
+    {
+        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
+        output = hardwareMap.get(DcMotor.class, "Output");
+        input = hardwareMap.get(DcMotor.class, "InputMotor");
+        output2 = hardwareMap.get(Servo.class, "OutputServo");
+        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
+        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
+        // creating the pose
+        Pose2d startPose = new Pose2d(12.0 , 65.5, Math.toRadians(180));
+        // building the trajectories
+        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(8.0 , 24.0, Math.toRadians(180)))
+                .build();
+        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+                .build();
+        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
+                .build();
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+                .build();
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(8.0 , 24.0, Math.toRadians(180)))
+                .build();
+        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+                .build();
+        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
+                .build();
+
+        // start of auto
+        drivetrain.followTrajectory(Traj1);
+        // raise output, turn servo
+
+        output.setPower(0.5);
+        sleep(1200);// make this change based on positioning of duck
+        output.setPower(0.0);
+        output2.setPosition(0.7);
         sleep(1000);
-        // senseing da things
+        output2.setPosition(0);
+        output.setPower(0.5);
+        sleep(1200);// make this change based on positioning of duck
+        output.setPower(0.0);
 
-        Trajectory traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-41.5, 4))
-                .build();
-        drivetrain.followTrajectory(traj1);
+        for (int i = 1; i < 3; i++) {
+            drivetrain.followTrajectory(Traj2);
+            drivetrain.followTrajectory(Traj3);
+            // spin input
+            input.setPower(0.8);
+            sleep(2000);
+            input.setPower(0);
+            drivetrain.followTrajectory(Traj4);
+            output2.setPosition(0.7);
+            drivetrain.followTrajectory(Traj5);
+            // turn servo
+            output2.setPosition(0);
+        }
+        // parking
+        drivetrain.followTrajectory(Traj6);
 
-        // moves to the shipping thing
+        drivetrain.followTrajectory(Traj7);
+        // end of auto
 
 
-        Trajectory traj2 = drivetrain.trajectoryBuilder(traj1.end())
-                .lineToLinearHeading(new Pose2d(-36, -25, Math.toRadians(270)))
-                .build();
-        drivetrain.followTrajectory(traj2);
-        // duck go brrr
 
 
-        sleep(1000);
-
-        Trajectory traj3 = drivetrain.trajectoryBuilder(traj2.end())
-                .lineToConstantHeading(new Vector2d(5.5, 69))
-                .build();
-        drivetrain.followTrajectory(traj3);
-// time to park
-
-        Trajectory traj4 = drivetrain.trajectoryBuilder(traj3.end())
-                .forward(31)
-                .build();
-        drivetrain.followTrajectory(traj4);
-// time to park
     }
+
+
+
+
+
 
 
 
@@ -172,8 +228,7 @@ public class Path1copy extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-                                fullPath();
-                                parkingPath();
+
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
 
@@ -194,6 +249,3 @@ public class Path1copy extends LinearOpMode {
         }
     }
 }
-
-
-
