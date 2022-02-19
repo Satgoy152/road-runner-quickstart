@@ -109,7 +109,7 @@ public class Teleop2022 extends LinearOpMode{
         backrightmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backleftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        output2.setPosition(0.7);
+        output2.setPosition(0.3);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -128,9 +128,9 @@ public class Teleop2022 extends LinearOpMode{
         boolean beforeYPressed = false;
         int outputState = 0;
         int teamMarkerServoState = 0;
-        int outputSlidesState = 0;
+        int outputSlidesState = 1;
 
-        output2.setPosition(0.7);
+        output2.setPosition(0.3);
         teamMarkerServo.setPosition(0.0);
 
 
@@ -239,14 +239,14 @@ public class Teleop2022 extends LinearOpMode{
                 outputSlidesState = 1;
                 output2.setPosition(0.3);
                 output.setPower(0.5);
-                sleep(1200);
+                sleep(1500);
                 output.setPower(0.0);
             }
             else if(outputSlidesState == 1 && gamepad2.right_bumper){
                 outputSlidesState = 0;
                 output2.setPosition(0.4);
                 output.setPower(-0.5);
-                sleep(1500);
+                sleep(1800);
                 output.setPower(0.0);
             }
             else{
