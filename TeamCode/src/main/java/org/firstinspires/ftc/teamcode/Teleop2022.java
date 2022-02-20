@@ -34,8 +34,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -69,6 +72,10 @@ public class Teleop2022 extends LinearOpMode{
     private CRServo carouselArm = null;
     private Servo teamMarkerServo = null;
 
+    private DistanceSensor dsensor = null;
+
+
+
 
     @Override
 
@@ -85,10 +92,13 @@ public class Teleop2022 extends LinearOpMode{
 
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
         output = hardwareMap.get(DcMotor.class, "Output");
+
         input = hardwareMap.get(DcMotor.class, "InputMotor");
         output2 = hardwareMap.get(Servo.class, "OutputServo");
         carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
         teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
+
 
 
         frontleftmotor.setPower(0.0);
@@ -109,7 +119,11 @@ public class Teleop2022 extends LinearOpMode{
         backrightmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backleftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        output2.setPosition(0.7);
+
+        output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        output2.setPosition(0.3);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -128,9 +142,8 @@ public class Teleop2022 extends LinearOpMode{
         boolean beforeYPressed = false;
         int outputState = 0;
         int teamMarkerServoState = 0;
-        int outputSlidesState = 0;
+        int outputSlidesState = 1;
 
-        output2.setPosition(0.7);
         teamMarkerServo.setPosition(0.0);
 
 
@@ -167,7 +180,7 @@ public class Teleop2022 extends LinearOpMode{
 
 
 
-            if (beforeAPressed && beforeAPressed != gamepad1.a) {
+            if (beforeAPressed && beforeAPressed != gamepad1.y) {
                 if(inputRunning) {
                     input.setPower(-0.8);
                 } else {
@@ -175,7 +188,17 @@ public class Teleop2022 extends LinearOpMode{
                 }
                 inputRunning = !inputRunning;
             }
-            beforeAPressed = gamepad1.a;
+            beforeAPressed = gamepad1.y;
+
+            if (beforeXPressed && beforeXPressed != gamepad1.x) {
+                if(inputOut) {
+                    input.setPower(0.8);
+                } else {
+                    input.setPower(0.0);
+                }
+                inputOut = !inputOut;
+            }
+            beforeXPressed = gamepad1.x;
 
 
             if (beforeBPressed && beforeBPressed != gamepad1.b) {
@@ -188,16 +211,13 @@ public class Teleop2022 extends LinearOpMode{
             }
             beforeBPressed = gamepad1.b;
 
-            if (beforeXPressed && beforeXPressed != gamepad1.x) {
-                if(inputOut) {
-                    input.setPower(0.8);
-                } else {
-                    input.setPower(0.0);
-                }
-                inputOut = !inputOut;
-            }
-            beforeXPressed = gamepad1.x;
 
+            if(dsensor.getDistance(DistanceUnit.CM) < 7.0){
+                output2.setPosition(0.4);
+            }
+            else{
+                output2.setPosition(0.3);
+            }
 
 
             if(gamepad2.dpad_up){
@@ -213,50 +233,58 @@ public class Teleop2022 extends LinearOpMode{
                 teamMarkerMotor.setPower(0.0);
             }
 
-            if(outputState == 0 && gamepad2.b){
+            if((outputState == 0) && gamepad2.y){
                 output2.setPosition(0.7);
                 outputState = 1;
                 sleep(500);
             }
-            else if(outputState == 1 && gamepad2.b){
+            else if((outputState == 1) && gamepad2.y){
                 output2.setPosition(0.3);
                 outputState = 0;
                 sleep(500);
             }
 
-            if(teamMarkerServoState == 0 && gamepad2.x){
+            if((teamMarkerServoState == 0) && gamepad2.x){
                 teamMarkerServo.setPosition(0.5);
                 teamMarkerServoState = 1;
                 sleep(500);
             }
-            else if(teamMarkerServoState == 1 && gamepad2.x){
+            else if((teamMarkerServoState == 1) && gamepad2.x){
                 teamMarkerServo.setPosition(0.1);
                 teamMarkerServoState = 0;
                 sleep(500);
             }
 
-            if(outputSlidesState == 0 && gamepad2.left_bumper){
+            if((outputSlidesState == 0) && gamepad2.left_bumper){
                 outputSlidesState = 1;
+                output.setTargetPosition(0);
                 output2.setPosition(0.3);
-                output.setPower(0.5);
-                sleep(1200);
+                output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                output.setPower(0.7);
+
+                while (opModeIsActive() && (output.isBusy())) {
+
+                }
                 output.setPower(0.0);
+                output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-            else if(outputSlidesState == 1 && gamepad2.right_bumper){
+            else if((outputSlidesState == 1) && gamepad2.right_bumper){
                 outputSlidesState = 0;
+                output.setTargetPosition(-2300);
                 output2.setPosition(0.4);
-                output.setPower(-0.5);
-                sleep(1500);
+                output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                output.setPower(-0.7);
+
+                while (opModeIsActive() && (output.isBusy())) {
+
+                }
                 output.setPower(0.0);
+                output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             }
             else{
                 output.setPower(0.0);
             }
-
-
-
-
-
 
 
 
