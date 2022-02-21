@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import java.util.List;
 
 @Autonomous(name = "Pathcopy", group = "Concept")
-public class Path1copy extends LinearOpMode {
+public class RedBottom extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
             "Ball",
@@ -194,12 +194,70 @@ public class Path1copy extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-                                fullPath();
-                                parkingPath();
+                                path();
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
+                                // 191 - 300
+                                if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                    // Lift arm to first rung level
+                                    telemetry.addData("First Rung Level", ".");
 
-                            } else {
+                                    output2.setPosition(0.7);
+                                    sleep(1000);
+                                    output2.setPosition(0);
+                                    sleep(1200);// make this change based on positioning of duck
+                                }
+                                // 400 - 600
+                                else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                    // Lift arm to second rung level
+                                    telemetry.addData("Second Rung Level", ".");
+
+                                    output.setTargetPosition(-1600);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(-0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+
+                                    output2.setPosition(0.7);
+                                    sleep(1000);
+                                    output2.setPosition(0);
+                                    sleep(1200);// make this change based on positioning of duck
+
+                                    output.setTargetPosition(0);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+                                }
+                                else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                    // Lift arm to third rung level
+                                    telemetry.addData("Third Rung Level", ".");
+                                    output.setTargetPosition(-3200);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(-0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+
+                                    output2.setPosition(0.7);
+                                    sleep(1000);
+                                    output2.setPosition(0);
+                                    sleep(1200);// make this change based on positioning of duck
+
+                                    output.setTargetPosition(0);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+                                }
+                            }else {
                                 isDuckDetected = false;
                             }
                             if (recognition.getLabel().equals("Cube")) {
