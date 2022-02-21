@@ -68,7 +68,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx frontleftmotor,frontrightmotor,backrightmotor,backleftmotor;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -116,12 +116,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        frontleftmotor = hardwareMap.get(DcMotorEx.class, "FrontLeftMotor");
+        frontrightmotor = hardwareMap.get(DcMotorEx.class, "FrontRightMotor");
+        backrightmotor = hardwareMap.get(DcMotorEx.class, "BackRightMotor");
+        backleftmotor = hardwareMap.get(DcMotorEx.class, "BackLeftMotor");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+
+        motors = Arrays.asList(frontleftmotor,frontrightmotor,backrightmotor,backleftmotor);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -143,7 +144,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
@@ -166,6 +167,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                 MAX_ANG_VEL, MAX_ANG_ACCEL
         );
     }
+
+
 
     public void turnAsync(double angle) {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
@@ -285,10 +288,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        frontleftmotor.setPower(v);
+        backleftmotor.setPower(v1);
+        backrightmotor.setPower(v2);
+        frontrightmotor.setPower(v3);
     }
 
     @Override
@@ -317,3 +320,4 @@ public class SampleMecanumDrive extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 }
+

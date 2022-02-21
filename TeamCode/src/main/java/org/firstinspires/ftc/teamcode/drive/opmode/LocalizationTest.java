@@ -4,6 +4,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -16,9 +20,20 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
+
+    private Encoder leftEncoder, rightEncoder, frontEncoder;
+
+
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontRightMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightMotor"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackLeftMotor"));
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -39,6 +54,10 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+
+            telemetry.addData("LeftEncoder: ", leftEncoder.getCurrentPosition());
+            telemetry.addData("RightEncoder: ", rightEncoder.getCurrentPosition());
+            telemetry.addData("frontEncoder: ", frontEncoder.getCurrentPosition());
             telemetry.update();
         }
     }

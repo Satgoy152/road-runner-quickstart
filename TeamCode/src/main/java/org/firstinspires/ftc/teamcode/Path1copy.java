@@ -172,8 +172,7 @@ public class Path1copy extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-                                fullPath();
-                                parkingPath();
+
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
 
