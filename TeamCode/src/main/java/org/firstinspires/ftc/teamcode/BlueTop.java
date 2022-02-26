@@ -17,8 +17,13 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-@Autonomous(name = "Pathcopy", group = "Concept")
-public class Path1copy extends LinearOpMode {
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/blue-top.java
+@Autonomous(name = "Path1Copy", group = "Concept")
+public class Path1Copy extends LinearOpMode {
+=======
+@Autonomous(name = "blue", group = "Concept")
+public class BlueTop extends LinearOpMode {
+>>>>>>> b2851f8fdc764662dc86b2c13f241a1ad81b548b:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/BlueTop.java
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
             "Ball",
@@ -51,7 +56,6 @@ public class Path1copy extends LinearOpMode {
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */
-    private TFObjectDetector tfod;
     private DcMotor teamMarkerMotor = null;
     private DcMotor output = null;
     private DcMotor input = null;
@@ -59,11 +63,10 @@ public class Path1copy extends LinearOpMode {
     private Servo output2 = null;
     private CRServo carouselArm = null;
     private Servo teamMarkerServo = null;
+    private TFObjectDetector tfod;
 
 
     @Override
-
-
 
     public void runOpMode(){
 
@@ -83,8 +86,6 @@ public class Path1copy extends LinearOpMode {
             //tfod.setZoom(2.5, 16.0/9.0);
         }
 
-
-
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -96,10 +97,9 @@ public class Path1copy extends LinearOpMode {
 
 
 
-
     }
-    public void path()
-    {
+
+    public void path() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
         output = hardwareMap.get(DcMotor.class, "Output");
@@ -109,34 +109,35 @@ public class Path1copy extends LinearOpMode {
         teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
 // -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
         // creating the pose
-        Pose2d startPose = new Pose2d(12.0 , 65.5, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(-36.0, -65.5, Math.toRadians(180));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(8.0 , 24.0, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(8.0 , -24.0, Math.toRadians(180)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(8.0 , -65.5, Math.toRadians(180)))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(40.0 , -65.5, Math.toRadians(180)))
                 .build();
         Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(8.0 , -65.5, Math.toRadians(180)))
                 .build();
         Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 24.0, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(8.0 , -24.0, Math.toRadians(180)))
                 .build();
         Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(8.0 , -65.5, Math.toRadians(180)))
                 .build();
         Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(40.0 , -65.5, Math.toRadians(180)))
                 .build();
 
+
         // start of auto
+        // placing pre-placed object onto shipping hub
         drivetrain.followTrajectory(Traj1);
         // raise output, turn servo
-
         output.setPower(0.5);
         sleep(1200);// make this change based on positioning of duck
         output.setPower(0.0);
@@ -147,18 +148,28 @@ public class Path1copy extends LinearOpMode {
         sleep(1200);// make this change based on positioning of duck
         output.setPower(0.0);
 
+        // cycling
         for (int i = 1; i < 3; i++) {
             drivetrain.followTrajectory(Traj2);
             drivetrain.followTrajectory(Traj3);
-            // spin input
+            // spining input
             input.setPower(0.8);
             sleep(2000);
             input.setPower(0);
             drivetrain.followTrajectory(Traj4);
-            output2.setPosition(0.7);
             drivetrain.followTrajectory(Traj5);
-            // turn servo
+            // bringing up output
+            output.setPower(0.5);
+            sleep(1200);
+            output.setPower(0.0);
+            // turning servo
+            output2.setPosition(0.7);
+            sleep(1000);
             output2.setPosition(0);
+            // bringing down ouput
+            output.setPower(-0.5);
+            sleep(1200);
+            output.setPower(0.0);
         }
         // parking
         drivetrain.followTrajectory(Traj6);
@@ -167,15 +178,7 @@ public class Path1copy extends LinearOpMode {
         // end of auto
 
 
-
-
     }
-
-
-
-
-
-
 
 
     private void initVuforia() {
@@ -228,18 +231,71 @@ public class Path1copy extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-
+                                path();
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
+                                // 191 - 300
+                                if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                    // Lift arm to first rung level
+                                    telemetry.addData("First Rung Level", ".");
 
-                            } else {
+                                    output2.setPosition(0.7);
+                                    sleep(1000);
+                                    output2.setPosition(0);
+                                    sleep(1200);// make this change based on positioning of duck
+                                }
+                                // 400 - 600
+                                else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                    // Lift arm to second rung level
+                                    telemetry.addData("Second Rung Level", ".");
+
+                                    output.setTargetPosition(-1600);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(-0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+
+                                    output2.setPosition(0.7);
+                                    sleep(1000);
+                                    output2.setPosition(0);
+                                    sleep(1200);// make this change based on positioning of duck
+
+                                    output.setTargetPosition(0);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+                                }
+                                else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                    // Lift arm to third rung level
+                                    telemetry.addData("Third Rung Level", ".");
+                                    output.setTargetPosition(-3200);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(-0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+
+                                    output2.setPosition(0.7);
+                                    sleep(1000);
+                                    output2.setPosition(0);
+                                    sleep(1200);// make this change based on positioning of duck
+
+                                    output.setTargetPosition(0);
+                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                    output.setPower(0.7);
+                                    while(output.isBusy() && opModeIsActive()) {
+                                        //Loop body can be empty
+                                    }
+                                }
+                            }else {
                                 isDuckDetected = false;
-                            }
-                            if (recognition.getLabel().equals("Cube")) {
-                                isCubeDetected = true;
-                                telemetry.addData("Object Detected", "Cube");
-                            } else {
-                                isCubeDetected = false;
                             }
                         }
                         telemetry.update();
