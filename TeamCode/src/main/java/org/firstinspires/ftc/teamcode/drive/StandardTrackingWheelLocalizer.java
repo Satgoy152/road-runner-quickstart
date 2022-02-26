@@ -36,8 +36,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 0.97777777777777777777; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 98/50; // Multiplier in the Y direction
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -46,11 +46,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontLeftMotor"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightMotor"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontLeftMotor"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackLeftMotor"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+
     }
 
     public static double encoderTicksToInches(double ticks) {

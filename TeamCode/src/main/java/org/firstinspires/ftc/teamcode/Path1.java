@@ -18,8 +18,13 @@ public class Path1 extends LinearOpMode {
 
         waitForStart();
 
-        parkingPath();
-        fullPath();
+        Pose2d startPose = new Pose2d(0,0, Math.toRadians(90));
+        drivetrain.setPoseEstimate(startPose);
+        Trajectory traj2 = drivetrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-36, -25, Math.toRadians(270)))
+                .build();
+        drivetrain.followTrajectory(traj2);
+
 
 
     }

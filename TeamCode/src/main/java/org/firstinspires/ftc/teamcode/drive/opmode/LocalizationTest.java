@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.util.Encoder;
-
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /**
@@ -18,22 +17,21 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
+
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
-
-
-
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontRightMotor"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightMotor"));
+
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontRightMotor"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackLeftMotor"));
+
+
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -54,10 +52,12 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("leftEncoder: ", leftEncoder.getCurrentPosition());
 
-            telemetry.addData("LeftEncoder: ", leftEncoder.getCurrentPosition());
-            telemetry.addData("RightEncoder: ", rightEncoder.getCurrentPosition());
+            telemetry.addData("rightEncoder: ", rightEncoder.getCurrentPosition());
+
             telemetry.addData("frontEncoder: ", frontEncoder.getCurrentPosition());
+
             telemetry.update();
         }
     }

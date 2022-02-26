@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-@Autonomous(name = "blue", group = "Concept")
-public class blue extends LinearOpMode {
+@Autonomous(name = "Path1Copy", group = "Concept")
+public class Path1Copy extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
             "Ball",
