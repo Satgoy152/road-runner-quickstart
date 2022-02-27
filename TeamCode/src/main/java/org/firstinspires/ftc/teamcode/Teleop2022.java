@@ -68,12 +68,6 @@ public class Teleop2022 extends LinearOpMode{
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-
-//    private DcMotor frontleftmotor = null;
-//    private DcMotor frontrightmotor = null;
-//    private DcMotor backleftmotor = null;
-//    private DcMotor backrightmotor = null;
-
     private DcMotor teamMarkerMotor = null;
     private DcMotor output = null;
     private DcMotor input = null;
@@ -128,8 +122,6 @@ public class Teleop2022 extends LinearOpMode{
         armThread.start();
 
         runtime.reset();
-        double constant1 = 0.6;
-        int changeMove = 0;
         double posUp = 0.7;
         double posDown = 0.3;
         boolean beforeAPressed = false;
@@ -138,9 +130,11 @@ public class Teleop2022 extends LinearOpMode{
         boolean beforeXPressed = false;
         boolean inputOut = false;
         boolean outputRunning = false;
-        boolean beforeYPressed = false;
-        int outputState = 0;
-        int outputSlidesState = 1;
+        boolean cycleState = false;
+
+        double currentX = 0.0;
+        double currentY = 0.0;
+        double currentHeading = 0.0;
 
         teamMarkerServo.setPosition(0.0);
 
@@ -164,7 +158,7 @@ public class Teleop2022 extends LinearOpMode{
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
 
-            Pose2d startPose = new Pose2d(0.0 , 0.0, Math.toRadians(0));
+            Pose2d startPose = new Pose2d(10.0 , 0.0, Math.toRadians(0));
             //drivetrain.setPoseEstimate(startPose);
             // building the trajectories
             Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
@@ -183,7 +177,7 @@ public class Teleop2022 extends LinearOpMode{
                     .build();
 
             Trajectory Traj5 = drivetrain.trajectoryBuilder(new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()))
-                    .lineToLinearHeading(new Pose2d(10.0 , -3.0, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(currentX, currentY, currentHeading))
                     .build();
 
 
@@ -194,16 +188,22 @@ public class Teleop2022 extends LinearOpMode{
                 drivetrain.followTrajectory(Traj2);
 
             }
-
             if(gamepad1.dpad_down){
 
                 drivetrain.followTrajectory(Traj3);
                 drivetrain.followTrajectory(Traj4);
 
+                currentX = poseEstimate.getX();
+                currentY = poseEstimate.getY();
+                currentHeading = poseEstimate.getHeading();
+                cycleState = false;
+
             }
 
             if(gamepad1.dpad_right){
+
                 drivetrain.followTrajectory(Traj5);
+
             }
 
             if (beforeAPressed && beforeAPressed != gamepad1.y) {
@@ -241,9 +241,11 @@ public class Teleop2022 extends LinearOpMode{
             if(dsensor.getDistance(DistanceUnit.CM) < 7.0){
                 output2.setPosition(0.5);
                 output.setPower(0.0);
-//                //carouselArm.setPower(0.5);
-//                sleep(500);
-//                carouselArm.setPower(0.0);
+                if(!cycleState){
+                    cycleState = true;
+                    carouselArm.setPower(0.5);
+                    sleep(500);
+                }
             }
             else{
                 output2.setPosition(posDown);
