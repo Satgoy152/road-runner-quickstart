@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-@Autonomous(name = "Pathcopy", group = "Concept")
+@Autonomous(name = "Redtop", group = "Concept")
 public class RedTop extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
@@ -120,6 +120,7 @@ public class RedTop extends LinearOpMode {
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
                 .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
                 .build();
+
         Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj2.end())
                 .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
                 .build();

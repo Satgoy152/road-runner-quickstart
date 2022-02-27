@@ -1,8 +1,0 @@
-private DistanceSensor dsensor;
-
-dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
-
-if(dsensor.getDistance(CM) < 1.0){
-	output.setPower(1.0);
-	sleep(100);
-}

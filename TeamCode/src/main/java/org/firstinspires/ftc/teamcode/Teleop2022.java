@@ -30,15 +30,20 @@ Copyright (c) 2017 FIRST. All rights reserved.
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -58,11 +63,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 public class Teleop2022 extends LinearOpMode{
+
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontleftmotor = null;
-    private DcMotor frontrightmotor = null;
-    private DcMotor backleftmotor = null;
-    private DcMotor backrightmotor = null;
+
+    private Encoder leftEncoder, rightEncoder, frontEncoder;
+
+
+//    private DcMotor frontleftmotor = null;
+//    private DcMotor frontrightmotor = null;
+//    private DcMotor backleftmotor = null;
+//    private DcMotor backrightmotor = null;
 
     private DcMotor teamMarkerMotor = null;
     private DcMotor output = null;
@@ -76,19 +86,17 @@ public class Teleop2022 extends LinearOpMode{
 
 
 
-
     @Override
 
     public void runOpMode() {
+
+        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+
         telemetry.addData("Status", "Working");
         telemetry.update();
 
-        Thread  driveThread = new DriveThread();
+        Thread armThread = new ArmThread();
 
-        frontleftmotor = hardwareMap.get(DcMotor.class, "FrontLeftMotor");
-        frontrightmotor = hardwareMap.get(DcMotor.class, "FrontRightMotor");
-        backrightmotor = hardwareMap.get(DcMotor.class, "BackRightMotor");
-        backleftmotor = hardwareMap.get(DcMotor.class, "BackLeftMotor");
 
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
         output = hardwareMap.get(DcMotor.class, "Output");
@@ -100,25 +108,14 @@ public class Teleop2022 extends LinearOpMode{
         dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
 
 
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontRightMotor"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackLeftMotor"));
 
-        frontleftmotor.setPower(0.0);
-        frontrightmotor.setPower(0.0);
-        backleftmotor.setPower(0.0);
-        backrightmotor.setPower(0.0);
+        drivetrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-        // transfer.setPosition((-0.5));
         // RESET THESE VALUES
         carouselArm.setPower(0.0);
-        //teamMarkerServo.setPosition(0.8);
-
-
-
-        frontleftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontrightmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backrightmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backleftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
         output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -128,11 +125,13 @@ public class Teleop2022 extends LinearOpMode{
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveThread.start();
+        armThread.start();
 
         runtime.reset();
         double constant1 = 0.6;
         int changeMove = 0;
+        double posUp = 0.7;
+        double posDown = 0.3;
         boolean beforeAPressed = false;
         boolean inputRunning = false;
         boolean beforeBPressed = false;
@@ -141,48 +140,75 @@ public class Teleop2022 extends LinearOpMode{
         boolean outputRunning = false;
         boolean beforeYPressed = false;
         int outputState = 0;
-        int teamMarkerServoState = 0;
         int outputSlidesState = 1;
 
         teamMarkerServo.setPosition(0.0);
 
-
-
-
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            //This moves the base
-//            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-//            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-//            double rightX = gamepad1.right_stick_x;
-//            final double v1 = -r * Math.sin(robotAngle) + rightX;
-//            final double v2 = r * Math.cos(robotAngle) + rightX;
-//            final double v3 = -r * Math.cos(robotAngle) + rightX;
-//            final double v4 = r * Math.sin(robotAngle) + rightX;
-//
-//            frontleftmotor.setPower(v1);
-//            frontrightmotor.setPower(v2);
-//            backleftmotor.setPower(v3);
-//            backrightmotor.setPower(v4);
 
-            //This moves the base
-            /**
-            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = gamepad1.right_stick_x;
-            final double v1 = -gamepad1.left_stick_y + rightX;
-            final double v2 = gamepad1.left_stick_x + rightX;
-            final double v3 = -gamepad1.left_stick_x + rightX;
-            final double v4 = gamepad1.left_stick_y + rightX;
-**/
+            drivetrain.setWeightedDrivePower(
+                    new Pose2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x,
+                            -gamepad1.right_stick_x
+                    )
+            );
+
+            drivetrain.update();
+
+            Pose2d poseEstimate = drivetrain.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.update();
+
+            Pose2d startPose = new Pose2d(0.0 , 0.0, Math.toRadians(0));
+            //drivetrain.setPoseEstimate(startPose);
+            // building the trajectories
+            Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+                    .lineToLinearHeading(new Pose2d(-20.0 , 0.0, Math.toRadians(0)))
+                    .build();
+            Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+                    .lineToLinearHeading(new Pose2d(-34.0 , 25.5, Math.toRadians(-70)))
+                    .build();
+
+            Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+                    .lineToLinearHeading(new Pose2d(-20.0 , -3.0, Math.toRadians(0)))
+                    .build();
+
+            Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+                    .lineToLinearHeading(new Pose2d(10.0 , -3.0, Math.toRadians(0)))
+                    .build();
+
+            Trajectory Traj5 = drivetrain.trajectoryBuilder(new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()))
+                    .lineToLinearHeading(new Pose2d(10.0 , -3.0, Math.toRadians(0)))
+                    .build();
 
 
+
+            if(gamepad1.dpad_up){
+
+                drivetrain.followTrajectory(Traj1);
+                drivetrain.followTrajectory(Traj2);
+
+            }
+
+            if(gamepad1.dpad_down){
+
+                drivetrain.followTrajectory(Traj3);
+                drivetrain.followTrajectory(Traj4);
+
+            }
+
+            if(gamepad1.dpad_right){
+                drivetrain.followTrajectory(Traj5);
+            }
 
             if (beforeAPressed && beforeAPressed != gamepad1.y) {
                 if(inputRunning) {
-                    input.setPower(-0.8);
+                    input.setPower(-0.9);
                 } else {
                     input.setPower(0.0);
                 }
@@ -213,131 +239,116 @@ public class Teleop2022 extends LinearOpMode{
 
 
             if(dsensor.getDistance(DistanceUnit.CM) < 7.0){
-                output2.setPosition(0.4);
+                output2.setPosition(0.5);
+                output.setPower(0.0);
+//                //carouselArm.setPower(0.5);
+//                sleep(500);
+//                carouselArm.setPower(0.0);
             }
             else{
-                output2.setPosition(0.3);
+                output2.setPosition(posDown);
+                carouselArm.setPower(0.0);
             }
-
-
-            if(gamepad2.dpad_up){
-                teamMarkerMotor.setPower(-0.3);
-            }
-
-            else if(gamepad2.dpad_down){
-
-                teamMarkerMotor.setPower(0.3);
-
-            }
-            else{
-                teamMarkerMotor.setPower(0.0);
-            }
-
-            if((outputState == 0) && gamepad2.y){
-                output2.setPosition(0.7);
-                outputState = 1;
-                sleep(500);
-            }
-            else if((outputState == 1) && gamepad2.y){
-                output2.setPosition(0.3);
-                outputState = 0;
-                sleep(500);
-            }
-
-            if((teamMarkerServoState == 0) && gamepad2.x){
-                teamMarkerServo.setPosition(0.5);
-                teamMarkerServoState = 1;
-                sleep(500);
-            }
-            else if((teamMarkerServoState == 1) && gamepad2.x){
-                teamMarkerServo.setPosition(0.1);
-                teamMarkerServoState = 0;
-                sleep(500);
-            }
-
-            if((outputSlidesState == 0) && gamepad2.left_bumper){
-                outputSlidesState = 1;
-                output.setTargetPosition(0);
-                output2.setPosition(0.3);
-                output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                output.setPower(0.7);
-
-                while (opModeIsActive() && (output.isBusy())) {
-
-                }
-                output.setPower(0.0);
-                output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-            else if((outputSlidesState == 1) && gamepad2.right_bumper){
-                outputSlidesState = 0;
-                output.setTargetPosition(-2300);
-                output2.setPosition(0.4);
-                output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                output.setPower(-0.7);
-
-                while (opModeIsActive() && (output.isBusy())) {
-
-                }
-                output.setPower(0.0);
-                output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            }
-            else{
-                output.setPower(0.0);
-            }
-
-
-
-
 
         idle();
 
         }
-        driveThread.interrupt();
+
+
+        armThread.interrupt();
     }
-    private class DriveThread extends Thread
+
+
+
+    private class ArmThread extends Thread
     {
-        public DriveThread()
+        public ArmThread()
         {
-            this.setName("DriveThread");
+            this.setName("ArmThread");
         }
 
         // called when tread.start is called. thread stays in loop to do what it does until exit is
         // signaled by main code calling thread.interrupt.
         @Override
+
         public void run()
         {
 
             try
             {
+                int teamMarkerServoState = 0;
+
                 while (!isInterrupted())
                 {
                     // we record the Y values in the main class to make showing them in telemetry
                     // easier.
+                    if(gamepad1.dpad_down){
+                        output.setTargetPosition(0);
+                        output2.setPosition(0.3);
+                        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        output.setPower(0.7);
 
-                    double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-                    double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-                    double rightX = gamepad1.right_stick_x;
-                    final double v1 = -r * Math.sin(robotAngle) + rightX;
-                    final double v2 = r * Math.cos(robotAngle) + rightX;
-                    final double v3 = -r * Math.cos(robotAngle) + rightX;
-                    final double v4 = r * Math.sin(robotAngle) + rightX;
+                        while (opModeIsActive() && (output.isBusy())) {
 
-                    frontleftmotor.setPower(v1);
-                    frontrightmotor.setPower(v2);
-                    backleftmotor.setPower(v3);
-                    backrightmotor.setPower(v4);
+                        }
+                        output.setPower(0.0);
+                        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                        input.setPower(-0.9);
+                    }
+                    if(gamepad1.dpad_up){
+                        input.setPower(-0.2);
+                        output.setTargetPosition(-2300);
+                        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        output.setPower(-0.7);
+                        while (opModeIsActive() && (output.isBusy())) {
+
+                        }
+                        output.setPower(0.0);
+                        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        input.setPower(0.0);
+                    }
+
+
+                    if(gamepad2.dpad_up){
+                        teamMarkerMotor.setPower(-0.3);
+                    }
+
+                    else if(gamepad2.dpad_down){
+
+                        teamMarkerMotor.setPower(0.3);
+
+                    }
+                    else{
+                        teamMarkerMotor.setPower(0.0);
+                    }
+
+                    if(gamepad2.y){
+                        output2.setPosition(0.7);
+                        sleep(500);
+                    }
+
+                    if((teamMarkerServoState == 0) && gamepad2.x){
+                        teamMarkerServo.setPosition(0.5);
+                        teamMarkerServoState = 1;
+                        sleep(500);
+                    }
+                    else if((teamMarkerServoState == 1) && gamepad2.x){
+                        teamMarkerServo.setPosition(0.1);
+                        teamMarkerServoState = 0;
+                        sleep(500);
+                    }
+
 
                     idle();
                 }
             }
-            catch (Exception e){    
+            catch (Exception e){
 
             }
 
         }
     }
-
 
 }
 
