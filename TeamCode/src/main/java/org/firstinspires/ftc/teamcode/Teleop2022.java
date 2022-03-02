@@ -134,6 +134,7 @@ public class Teleop2022 extends LinearOpMode{
         boolean beforeXPressed = false;
         boolean inputOut = false;
         boolean outputRunning = false;
+        boolean outOfWearhouse = false;
 
 
         double currentX = 0.0;
@@ -185,20 +186,21 @@ public class Teleop2022 extends LinearOpMode{
                     .build();
 
             Trajectory Traj5 = drivetrain.trajectoryBuilder(new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()))
-                    .lineToLinearHeading(new Pose2d(-20, 0, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d( 1.0 * currentX, 1.0 * currentY, 1.0 * currentHeading))
                     .build();
 
 
 
 
 
-            if(gamepad1.dpad_up){
+            if(gamepad1.dpad_up && !outOfWearhouse){
 
+                outOfWearhouse = true;
                 drivetrain.followTrajectory(Traj1);
                 drivetrain.followTrajectory(Traj2);
 
             }
-            if(gamepad1.dpad_down){
+            if(gamepad1.dpad_up && outOfWearhouse){
 
                 drivetrain.followTrajectory(Traj3);
                 drivetrain.followTrajectory(Traj4);
@@ -211,6 +213,7 @@ public class Teleop2022 extends LinearOpMode{
             }
 
             if(gamepad1.dpad_right){
+
                 drivetrain.followTrajectory(Traj5);
 
             }
@@ -274,11 +277,13 @@ public class Teleop2022 extends LinearOpMode{
             {
                 int teamMarkerServoState = 0;
 
+                boolean armUp = false;
+
                 while (!isInterrupted())
                 {
                     // we record the Y values in the main class to make showing them in telemetry
                     // easier.
-                    if(gamepad1.dpad_down){
+                    if(gamepad1.dpad_up && armUp){
                         output.setTargetPosition(0);
                         output2.setPosition(0.3);
                         output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -292,7 +297,9 @@ public class Teleop2022 extends LinearOpMode{
 
                         input.setPower(-0.9);
                     }
-                    if(gamepad1.dpad_up){
+
+                    if(gamepad1.dpad_up && !armUp){
+                        armUp = true;
                         input.setPower(-0.2);
                         output2.setPosition(0.5);
                         output.setTargetPosition(-2300);
