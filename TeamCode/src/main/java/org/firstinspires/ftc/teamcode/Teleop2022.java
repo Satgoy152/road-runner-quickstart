@@ -79,6 +79,12 @@ public class Teleop2022 extends LinearOpMode{
     private DistanceSensor dsensor = null;
 
     public boolean cycleState = false;
+    public double armRestingPosition = 0.4;
+    public boolean outOfWearhouse = false;
+    public int armState = 0;
+
+
+
 
 
 
@@ -126,15 +132,12 @@ public class Teleop2022 extends LinearOpMode{
         armThread.start();
 
         runtime.reset();
-        double posUp = 0.7;
-        double posDown = 0.3;
         boolean beforeAPressed = false;
         boolean inputRunning = false;
         boolean beforeBPressed = false;
         boolean beforeXPressed = false;
         boolean inputOut = false;
         boolean outputRunning = false;
-        boolean outOfWearhouse = false;
 
 
         double currentX = 0.0;
@@ -174,7 +177,7 @@ public class Teleop2022 extends LinearOpMode{
                     .lineToLinearHeading(new Pose2d(-20.0 , 0.0, Math.toRadians(0)))
                     .build();
             Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                    .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
+                    .lineToLinearHeading(new Pose2d(-33.0 , 21.5, Math.toRadians(-70)))
                     .build();
 
             Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
@@ -186,22 +189,20 @@ public class Teleop2022 extends LinearOpMode{
                     .build();
 
             Trajectory Traj5 = drivetrain.trajectoryBuilder(new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()))
-                    .lineToLinearHeading(new Pose2d( 1.0 * currentX, 1.0 * currentY, 1.0 * currentHeading))
+                    .lineToLinearHeading(new Pose2d( 1.0, 1.0, 1.0))
                     .build();
 
 
-
-
-
             if(gamepad1.dpad_up && !outOfWearhouse){
-
                 outOfWearhouse = true;
+                armState = 2;
                 drivetrain.followTrajectory(Traj1);
                 drivetrain.followTrajectory(Traj2);
 
             }
             if(gamepad1.dpad_up && outOfWearhouse){
-
+                outOfWearhouse = false;
+                armState = 1;
                 drivetrain.followTrajectory(Traj3);
                 drivetrain.followTrajectory(Traj4);
 
@@ -209,7 +210,6 @@ public class Teleop2022 extends LinearOpMode{
                 currentY = poseEstimate.getY();
                 currentHeading = poseEstimate.getHeading();
                 cycleState = false;
-
             }
 
             if(gamepad1.dpad_right){
@@ -283,9 +283,12 @@ public class Teleop2022 extends LinearOpMode{
                 {
                     // we record the Y values in the main class to make showing them in telemetry
                     // easier.
-                    if(gamepad1.dpad_up && armUp){
+                    if(gamepad1.dpad_up && (armState == 1)){
+                        armState = 0;
+                        armUp = false;
                         output.setTargetPosition(0);
                         output2.setPosition(0.3);
+                        armRestingPosition = 0.4;
                         output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         output.setPower(0.7);
 
@@ -298,10 +301,11 @@ public class Teleop2022 extends LinearOpMode{
                         input.setPower(-0.9);
                     }
 
-                    if(gamepad1.dpad_up && !armUp){
-                        armUp = true;
-                        input.setPower(-0.2);
+                    if(gamepad1.dpad_up && (armState == 2)){
+                        armState = 0;
+                        input.setPower(-0.7);
                         output2.setPosition(0.5);
+                        armRestingPosition = 0.5;
                         output.setTargetPosition(-2300);
                         output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         output.setPower(-0.7);
@@ -314,7 +318,7 @@ public class Teleop2022 extends LinearOpMode{
                     }
 
                     if(dsensor.getDistance(DistanceUnit.CM) < 7.0){
-                        output2.setPosition(0.4);
+                        output2.setPosition(armRestingPosition);
                         input.setPower(0.0);
                         if(!cycleState){
                             cycleState = true;
@@ -329,13 +333,13 @@ public class Teleop2022 extends LinearOpMode{
                     }
 
                     if(gamepad2.dpad_up){
-                        teamMarkerMotor.setTargetPosition(712);
+                        teamMarkerMotor.setTargetPosition(900);
                         teamMarkerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         teamMarkerMotor.setPower(0.8);
                         while (opModeIsActive() && (output.isBusy())) {
 
                         }
-                        teamMarkerMotor.setPower(0.0);
+                        teamMarkerMotor.setPower(0.4);
                         teamMarkerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     }
 
@@ -366,7 +370,7 @@ public class Teleop2022 extends LinearOpMode{
                         sleep(500);
                     }
                     else if((teamMarkerServoState == 1) && gamepad2.x){
-                        teamMarkerServo.setPosition(0.1);
+                        teamMarkerServo.setPosition(0.3);
                         teamMarkerServoState = 0;
                         sleep(500);
                     }
