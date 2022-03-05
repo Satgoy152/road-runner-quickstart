@@ -98,7 +98,7 @@ public class RedTop extends LinearOpMode {
 
 
     }
-    public void path()
+    public void first()
     {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
@@ -109,63 +109,64 @@ public class RedTop extends LinearOpMode {
         teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
 // -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
         // creating the pose
-        Pose2d startPose = new Pose2d(12.0 , 65.5, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(-12 , 0, Math.toRadians(270));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(8.0 , 24.0, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(290)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(3.0 , 0.0, Math.toRadians(330)))
                 .build();
-
-        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
                 .build();
-        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 24.0, Math.toRadians(180)))
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(290)))
                 .build();
-        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
-                .build();
-        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
-                .build();
+//        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj4.end())
+//                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
+//                .build();
+//        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj2.end())
+//                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
+//                .build();
 
         // start of auto
         drivetrain.followTrajectory(Traj1);
         // raise output, turn servo
-
-        output.setPower(0.5);
-        sleep(1200);// make this change based on positioning of duck
-        output.setPower(0.0);
+        output.setTargetPosition(-1000);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(-0.7);
         output2.setPosition(0.7);
-        sleep(1000);
+        sleep(500);
         output2.setPosition(0);
-        output.setPower(0.5);
-        sleep(1200);// make this change based on positioning of duck
-        output.setPower(0.0);
-
-        for (int i = 1; i < 3; i++) {
+        output.setTargetPosition(0);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(0.7);
+        for (int i = 0; i < 3; i++) {
             drivetrain.followTrajectory(Traj2);
             drivetrain.followTrajectory(Traj3);
             // spin input
             input.setPower(0.8);
-            sleep(2000);
+            sleep(3000);
             input.setPower(0);
             drivetrain.followTrajectory(Traj4);
-            output2.setPosition(0.7);
             drivetrain.followTrajectory(Traj5);
-            // turn servo
+            output.setTargetPosition(-3200);
+            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            output.setPower(-0.7);
+            output2.setPosition(0.7);
+            sleep(500);
             output2.setPosition(0);
-        }
-        // parking
-        drivetrain.followTrajectory(Traj6);
+            output.setTargetPosition(0);
+            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            output.setPower(0.7);
+            // turn servo
 
-        drivetrain.followTrajectory(Traj7);
-        // end of auto
+        }
+
 
 
 
@@ -229,41 +230,26 @@ public class RedTop extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-                                path();
+
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
                                 if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
-
-                                    output2.setPosition(0.7);
-                                    sleep(1000);
-                                    output2.setPosition(0);
-                                    sleep(1200);// make this change based on positioning of duck
+                                    first();
+                                    // make this change based on positioning of duck
                                 }
                                 // 400 - 600
                                 else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
-
-                                    output.setTargetPosition(-1600);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(-0.7);
+                                    first();
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
 
-                                    output2.setPosition(0.7);
-                                    sleep(1000);
-                                    output2.setPosition(0);
-                                    sleep(1200);// make this change based on positioning of duck
 
-                                    output.setTargetPosition(0);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(0.7);
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
@@ -271,23 +257,7 @@ public class RedTop extends LinearOpMode {
                                 else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
                                     // Lift arm to third rung level
                                     telemetry.addData("Third Rung Level", ".");
-                                    output.setTargetPosition(-3200);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(-0.7);
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
-
-                                    output2.setPosition(0.7);
-                                    sleep(1000);
-                                    output2.setPosition(0);
-                                    sleep(1200);// make this change based on positioning of duck
-
-                                    output.setTargetPosition(0);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(0.7);
+                                    first();
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
