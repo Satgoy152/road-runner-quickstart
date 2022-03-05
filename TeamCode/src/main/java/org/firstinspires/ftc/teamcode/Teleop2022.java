@@ -283,7 +283,7 @@ public class Teleop2022 extends LinearOpMode{
                 {
                     // we record the Y values in the main class to make showing them in telemetry
                     // easier.
-                    if(gamepad1.dpad_up && (armState == 1)){
+                    if(armState == 1){
                         armState = 0;
                         armUp = false;
                         output.setTargetPosition(0);
@@ -301,7 +301,7 @@ public class Teleop2022 extends LinearOpMode{
                         input.setPower(-0.9);
                     }
 
-                    if(gamepad1.dpad_up && (armState == 2)){
+                    if(armState == 2){
                         armState = 0;
                         input.setPower(-0.7);
                         output2.setPosition(0.5);
