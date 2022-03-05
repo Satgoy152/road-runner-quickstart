@@ -286,19 +286,17 @@ public class Teleop2022 extends LinearOpMode{
                     if(armState == 1){
                         armState = 0;
                         armUp = false;
+                        input.setPower(-0.9);
                         output.setTargetPosition(0);
                         output2.setPosition(0.3);
                         armRestingPosition = 0.4;
                         output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         output.setPower(0.7);
-
                         while (opModeIsActive() && (output.isBusy())) {
 
                         }
                         output.setPower(0.0);
                         output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                        input.setPower(-0.9);
                     }
 
                     if(armState == 2){

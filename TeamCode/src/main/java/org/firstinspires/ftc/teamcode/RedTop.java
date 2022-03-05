@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -59,6 +61,7 @@ public class RedTop extends LinearOpMode {
     private Servo output2 = null;
     private CRServo carouselArm = null;
     private Servo teamMarkerServo = null;
+    private DistanceSensor dsensor = null;
 
 
     @Override
@@ -107,24 +110,32 @@ public class RedTop extends LinearOpMode {
         output2 = hardwareMap.get(Servo.class, "OutputServo");
         carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
         teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
+
 // -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
         // creating the pose
-        Pose2d startPose = new Pose2d(-12 , 0, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(290)))
+                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
                 .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(3.0 , 0.0, Math.toRadians(330)))
+                .lineToLinearHeading(new Pose2d(8.0 , -5.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
                 .build();
         Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
-                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(290)))
+                .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
+                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
+                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
                 .build();
 //        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj4.end())
 //                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
@@ -136,34 +147,34 @@ public class RedTop extends LinearOpMode {
         // start of auto
         drivetrain.followTrajectory(Traj1);
         // raise output, turn servo
-        output.setTargetPosition(-1000);
-        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        output.setPower(-0.7);
         output2.setPosition(0.7);
         sleep(500);
         output2.setPosition(0);
-        output.setTargetPosition(0);
-        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        output.setPower(0.7);
+
         for (int i = 0; i < 3; i++) {
             drivetrain.followTrajectory(Traj2);
+            input.setPower(-0.9);
             drivetrain.followTrajectory(Traj3);
-            // spin input
-            input.setPower(0.8);
-            sleep(3000);
-            input.setPower(0);
             drivetrain.followTrajectory(Traj4);
+            // spin input
+            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
+                input.setPower(0.8);
+            }
+            input.setPower(0);
+            output2.setPosition(0.4);
             drivetrain.followTrajectory(Traj5);
+            drivetrain.followTrajectory(Traj6);
+            drivetrain.followTrajectory(Traj7);
             output.setTargetPosition(-3200);
             output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             output.setPower(-0.7);
             output2.setPosition(0.7);
             sleep(500);
-            output2.setPosition(0);
+            output2.setPosition(0.3);
             output.setTargetPosition(0);
             output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             output.setPower(0.7);
-            // turn servo
+
 
         }
 
@@ -172,13 +183,6 @@ public class RedTop extends LinearOpMode {
 
 
     }
-
-
-
-
-
-
-
 
     private void initVuforia() {
         /*
