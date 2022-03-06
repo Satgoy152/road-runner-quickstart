@@ -156,21 +156,20 @@ public class VuforiaDetection extends LinearOpMode {
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
-                                if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                if(recognition.getRight() > 300.0 && recognition.getRight() < 550.0 && recognition.getTop() < 360){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
                                 }
                                 // 400 - 600
-                                else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                else if(recognition.getRight() > 550.0 && recognition.getRight() < 600.0 && recognition.getTop() < 360){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
                                 }
-                                else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
-                                    // Lift arm to third rung level
-                                    telemetry.addData("Third Rung Level", ".");
-                                }
                             } else {
                                 isDuckDetected = false;
+                                if(recognition.getTop() < 360){
+                                    telemetry.addData("Third Rung Level", ".");
+                                }
                             }
                         }
                         telemetry.update();

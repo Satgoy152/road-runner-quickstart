@@ -66,8 +66,6 @@ public class RedTop extends LinearOpMode {
 
     @Override
 
-
-
     public void runOpMode(){
 
 
@@ -101,8 +99,7 @@ public class RedTop extends LinearOpMode {
 
 
     }
-    public void first()
-    {
+    public void first() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
         output = hardwareMap.get(DcMotor.class, "Output");
@@ -111,6 +108,7 @@ public class RedTop extends LinearOpMode {
         carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
         teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
         dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
+        int counter = 0;
 
 // -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
         // creating the pose
@@ -137,12 +135,16 @@ public class RedTop extends LinearOpMode {
         Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
                 .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
                 .build();
-//        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj4.end())
-//                .lineToLinearHeading(new Pose2d(8.0 , 65.5, Math.toRadians(180)))
-//                .build();
-//        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj2.end())
-//                .lineToLinearHeading(new Pose2d(40.0 , 65.5, Math.toRadians(180)))
-//                .build();
+        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
+                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
+                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+
+
 
         // start of auto
         drivetrain.followTrajectory(Traj1);
@@ -159,13 +161,212 @@ public class RedTop extends LinearOpMode {
             // spin input
             while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
                 input.setPower(0.8);
+                drivetrain.followTrajectory(goForward);
+                counter++;
+                sleep(500);
             }
+            for (i = 0; i < counter; i++)
+            { drivetrain.followTrajectory(goBackward);}
             input.setPower(0);
             output2.setPosition(0.4);
             drivetrain.followTrajectory(Traj5);
             drivetrain.followTrajectory(Traj6);
             drivetrain.followTrajectory(Traj7);
-            output.setTargetPosition(-3200);
+            output.setTargetPosition(-2300);
+            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            output.setPower(-0.7);
+            output2.setPosition(0.7);
+            sleep(500);
+            output2.setPosition(0.3);
+            output.setTargetPosition(0);
+            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            output.setPower(0.7);
+
+
+        }
+
+
+
+
+
+    }
+    public void second() {
+        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
+        output = hardwareMap.get(DcMotor.class, "Output");
+        input = hardwareMap.get(DcMotor.class, "InputMotor");
+        output2 = hardwareMap.get(Servo.class, "OutputServo");
+        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
+        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
+        int counter = 0;
+
+// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
+        // creating the pose
+        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
+        // building the trajectories
+        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
+                .build();
+        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(8.0 , -5.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+                .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
+                .build();
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
+                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
+                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
+                .build();
+        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
+                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
+                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+
+
+
+        // start of auto
+        drivetrain.followTrajectory(Traj1);
+        // raise output, turn servo
+        output.setTargetPosition(-1000);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(-0.7);
+        output2.setPosition(0.7);
+        sleep(500);
+        output2.setPosition(0);
+        output.setTargetPosition(0);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(0.7);
+
+        for (int i = 0; i < 3; i++) {
+            drivetrain.followTrajectory(Traj2);
+            input.setPower(-0.9);
+            drivetrain.followTrajectory(Traj3);
+            drivetrain.followTrajectory(Traj4);
+            // spin input
+            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
+                input.setPower(0.8);
+                drivetrain.followTrajectory(goForward);
+                counter++;
+                sleep(500);
+            }
+            for (i = 0; i < counter; i++)
+            { drivetrain.followTrajectory(goBackward);}
+            input.setPower(0);
+            output2.setPosition(0.4);
+            drivetrain.followTrajectory(Traj5);
+            drivetrain.followTrajectory(Traj6);
+            drivetrain.followTrajectory(Traj7);
+            output.setTargetPosition(-2300);
+            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            output.setPower(-0.7);
+            output2.setPosition(0.7);
+            sleep(500);
+            output2.setPosition(0.3);
+            output.setTargetPosition(0);
+            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            output.setPower(0.7);
+
+
+        }
+
+
+
+
+
+    }
+    public void third() {
+        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
+        output = hardwareMap.get(DcMotor.class, "Output");
+        input = hardwareMap.get(DcMotor.class, "InputMotor");
+        output2 = hardwareMap.get(Servo.class, "OutputServo");
+        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
+        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
+        int counter = 0;
+
+// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
+        // creating the pose
+        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
+        // building the trajectories
+        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-34.0 , 23.5, Math.toRadians(-60)))
+                .build();
+        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(10.0 , -5.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+                .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
+                .build();
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
+                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+                .build();
+        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
+                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
+                .build();
+        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
+                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
+                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+
+
+
+        // start of auto
+        drivetrain.followTrajectory(Traj1);
+        // raise output, turn servo
+        output.setTargetPosition(-2300);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(-0.7);
+        output2.setPosition(0.7);
+        sleep(500);
+        output2.setPosition(0);
+        output.setTargetPosition(0);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(0.7);
+
+        for (int i = 0; i < 3; i++) {
+            drivetrain.followTrajectory(Traj2);
+            input.setPower(-0.9);
+            drivetrain.followTrajectory(Traj3);
+            drivetrain.followTrajectory(Traj4);
+            // spin input
+            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
+                input.setPower(-0.9);
+                drivetrain.followTrajectory(goForward);
+                counter++;
+                sleep(500);
+            }
+            for (i = 0; i < counter; i++)
+            { drivetrain.followTrajectory(goBackward);}
+            input.setPower(0);
+            output2.setPosition(0.4);
+            drivetrain.followTrajectory(Traj5);
+            drivetrain.followTrajectory(Traj6);
+            drivetrain.followTrajectory(Traj7);
+            output.setTargetPosition(-2300);
             output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             output.setPower(-0.7);
             output2.setPosition(0.7);
@@ -248,7 +449,7 @@ public class RedTop extends LinearOpMode {
                                 else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
-                                    first();
+                                    second();
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
@@ -261,7 +462,7 @@ public class RedTop extends LinearOpMode {
                                 else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
                                     // Lift arm to third rung level
                                     telemetry.addData("Third Rung Level", ".");
-                                    first();
+                                    third();
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
