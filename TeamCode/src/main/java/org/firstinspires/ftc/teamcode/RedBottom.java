@@ -278,7 +278,7 @@ public class RedBottom extends LinearOpMode {
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
-                                if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                if(recognition.getRight() <= 550.0 && recognition.getTop() < 600){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
                                     first();

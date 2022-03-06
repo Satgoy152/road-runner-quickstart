@@ -317,7 +317,7 @@ public class Teleop2022 extends LinearOpMode{
 
                     if(dsensor.getDistance(DistanceUnit.CM) < 7.0){
                         output2.setPosition(armRestingPosition);
-                        input.setPower(0.0);
+                        input.setPower(0.5);
                         if(!cycleState){
                             cycleState = true;
                             carouselArm.setPower(0.5);
@@ -331,13 +331,13 @@ public class Teleop2022 extends LinearOpMode{
                     }
 
                     if(gamepad2.dpad_up){
-                        teamMarkerMotor.setTargetPosition(900);
+                        teamMarkerMotor.setTargetPosition(600);
                         teamMarkerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         teamMarkerMotor.setPower(0.8);
                         while (opModeIsActive() && (output.isBusy())) {
 
                         }
-                        teamMarkerMotor.setPower(0.4);
+                        teamMarkerMotor.setPower(0.3);
                         teamMarkerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     }
 

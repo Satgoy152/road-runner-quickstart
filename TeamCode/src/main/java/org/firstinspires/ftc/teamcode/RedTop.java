@@ -446,7 +446,7 @@ public class RedTop extends LinearOpMode {
                                     // make this change based on positioning of duck
                                 }
                                 // 400 - 600
-                                else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                else if(recognition.getRight() > 550.0 && recognition.getTop() < 600){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
                                     second();
@@ -454,15 +454,6 @@ public class RedTop extends LinearOpMode {
                                         //Loop body can be empty
                                     }
 
-
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
-                                }
-                                else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
-                                    // Lift arm to third rung level
-                                    telemetry.addData("Third Rung Level", ".");
-                                    third();
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
@@ -475,6 +466,7 @@ public class RedTop extends LinearOpMode {
                                 telemetry.addData("Object Detected", "Cube");
                             } else {
                                 isCubeDetected = false;
+                                third();
                             }
                         }
                         telemetry.update();

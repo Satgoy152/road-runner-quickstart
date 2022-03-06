@@ -65,7 +65,10 @@ public class VuforiaDetection extends LinearOpMode {
      */
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
-            "Duck"
+            "Duck",
+            "Cube",
+            "Duck",
+            "Marker"
     };
 
     /*
@@ -153,20 +156,18 @@ public class VuforiaDetection extends LinearOpMode {
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
-                                if(recognition.getRight() > 300.0 && recognition.getRight() < 550.0 && recognition.getTop() < 360){
+                                if(recognition.getRight() <= 550.0 && recognition.getTop() < 600){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
                                 }
                                 // 400 - 600
-                                else if(recognition.getRight() > 550.0 && recognition.getRight() < 600.0 && recognition.getTop() < 360){
+                                else if(recognition.getRight() > 550.0 && recognition.getTop() < 600){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
                                 }
                             } else {
                                 isDuckDetected = false;
-                                if(recognition.getTop() < 360){
-                                    telemetry.addData("Third Rung Level", ".");
-                                }
+                                telemetry.addData("Third Rung Level", ".");
                             }
                         }
                         telemetry.update();
