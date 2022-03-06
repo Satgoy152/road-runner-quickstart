@@ -137,7 +137,7 @@ public class RedBottom extends LinearOpMode {
         // finished with pathway
 
 
-    }
+    }// first rung level
     public void second() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
@@ -179,7 +179,7 @@ public class RedBottom extends LinearOpMode {
         // finished with pathway
 
 
-    }
+    }// second rung level
     public void third() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
@@ -221,7 +221,7 @@ public class RedBottom extends LinearOpMode {
         // finished with pathway
 
 
-    }
+    }// third rung level
 
 
     private void initVuforia() {
@@ -274,36 +274,25 @@ public class RedBottom extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-                                first();
+
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
-                                if(recognition.getRight() <= 550.0 && recognition.getTop() < 600){
+                                if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
                                     first();
+                                    // make this change based on positioning of duck
                                 }
                                 // 400 - 600
-                                else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                else if(recognition.getRight() > 550.0 && recognition.getTop() < 600){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
                                     second();
-
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
 
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
-                                }
-                                else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
-                                    // Lift arm to third rung level
-                                    telemetry.addData("Third Rung Level", ".");
-                                    third();
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
                                     while(output.isBusy() && opModeIsActive()) {
                                         //Loop body can be empty
                                     }
@@ -316,6 +305,7 @@ public class RedBottom extends LinearOpMode {
                                 telemetry.addData("Object Detected", "Cube");
                             } else {
                                 isCubeDetected = false;
+                                third();
                             }
                         }
                         telemetry.update();

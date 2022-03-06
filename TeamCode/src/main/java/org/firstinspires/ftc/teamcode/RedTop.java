@@ -189,7 +189,7 @@ public class RedTop extends LinearOpMode {
 
 
 
-    }
+    }// first rung level
     public void second() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
@@ -286,7 +286,7 @@ public class RedTop extends LinearOpMode {
 
 
 
-    }
+    }// second rung level
     public void third() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
@@ -383,7 +383,7 @@ public class RedTop extends LinearOpMode {
 
 
 
-    }
+    }// third rung level
 
     private void initVuforia() {
         /*
