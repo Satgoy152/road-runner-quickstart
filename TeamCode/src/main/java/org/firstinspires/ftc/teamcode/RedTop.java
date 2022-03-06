@@ -160,7 +160,7 @@ public class RedTop extends LinearOpMode {
             drivetrain.followTrajectory(Traj4);
             // spin input
             while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
-                input.setPower(0.8);
+                input.setPower(-0.8);
                 drivetrain.followTrajectory(goForward);
                 counter++;
                 sleep(500);
@@ -439,7 +439,7 @@ public class RedTop extends LinearOpMode {
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
-                                if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
                                     first();

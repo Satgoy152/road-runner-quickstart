@@ -185,7 +185,7 @@ public class Teleop2022 extends LinearOpMode{
                     .build();
 
             Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                    .lineToLinearHeading(new Pose2d(14.0 , -3.0, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(20.0 , -3.0, Math.toRadians(0)))
                     .build();
 
             Trajectory Traj5 = drivetrain.trajectoryBuilder(new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()))
@@ -286,7 +286,7 @@ public class Teleop2022 extends LinearOpMode{
                     if(armState == 1){
                         armState = 0;
                         armUp = false;
-                        input.setPower(-0.9);
+                        input.setPower(-0.8);
                         output.setTargetPosition(0);
                         output2.setPosition(0.3);
                         armRestingPosition = 0.4;
@@ -301,7 +301,6 @@ public class Teleop2022 extends LinearOpMode{
 
                     if(armState == 2){
                         armState = 0;
-                        input.setPower(-0.7);
                         output2.setPosition(0.5);
                         armRestingPosition = 0.5;
                         output.setTargetPosition(-2300);
@@ -333,11 +332,11 @@ public class Teleop2022 extends LinearOpMode{
                     if(gamepad2.dpad_up){
                         teamMarkerMotor.setTargetPosition(600);
                         teamMarkerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        teamMarkerMotor.setPower(0.8);
-                        while (opModeIsActive() && (output.isBusy())) {
+                        teamMarkerMotor.setPower(0.6);
+                        while (opModeIsActive() && (teamMarkerMotor.isBusy())) {
 
                         }
-                        teamMarkerMotor.setPower(0.3);
+                        teamMarkerMotor.setPower(0.0);
                         teamMarkerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     }
 
@@ -346,7 +345,7 @@ public class Teleop2022 extends LinearOpMode{
                         teamMarkerMotor.setTargetPosition(0);
                         teamMarkerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         teamMarkerMotor.setPower(-0.3);
-                        while (opModeIsActive() && (output.isBusy())) {
+                        while (opModeIsActive() && (teamMarkerMotor.isBusy())) {
 
                         }
                         teamMarkerMotor.setPower(0.0);
