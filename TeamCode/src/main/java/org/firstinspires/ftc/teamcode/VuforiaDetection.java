@@ -65,10 +65,7 @@ public class VuforiaDetection extends LinearOpMode {
      */
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
-            "Ball",
-            "Cube",
-            "Duck",
-            "Marker"
+            "Duck"
     };
 
     /*
