@@ -221,7 +221,7 @@ public class RedBottom extends LinearOpMode {
         // finished with pathway
 
 
-    }// third rung level
+    }// third rung level    
 
 
     private void initVuforia() {
