@@ -185,7 +185,7 @@ public class Teleop2022 extends LinearOpMode{
                     .build();
 
             Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                    .lineToLinearHeading(new Pose2d(10.0 , -3.0, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(14.0 , -3.0, Math.toRadians(0)))
                     .build();
 
             Trajectory Traj5 = drivetrain.trajectoryBuilder(new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()))
