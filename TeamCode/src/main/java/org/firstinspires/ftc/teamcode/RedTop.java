@@ -257,7 +257,7 @@ public class RedTop extends LinearOpMode {
             drivetrain.followTrajectory(Traj4);
             // spin input
             while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
-                input.setPower(0.8);
+                input.setPower(-0.8);
                 drivetrain.followTrajectory(goForward);
                 counter++;
                 sleep(500);

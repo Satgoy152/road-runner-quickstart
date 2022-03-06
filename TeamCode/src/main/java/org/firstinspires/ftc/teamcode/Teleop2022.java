@@ -330,26 +330,19 @@ public class Teleop2022 extends LinearOpMode{
                     }
 
                     if(gamepad2.dpad_up){
-                        teamMarkerMotor.setTargetPosition(600);
-                        teamMarkerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        teamMarkerMotor.setPower(0.6);
+                        teamMarkerMotor.setPower(0.4);
                         while (opModeIsActive() && (teamMarkerMotor.isBusy())) {
 
                         }
                         teamMarkerMotor.setPower(0.0);
-                        teamMarkerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     }
 
                     else if(gamepad2.dpad_down){
-
-                        teamMarkerMotor.setTargetPosition(0);
-                        teamMarkerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         teamMarkerMotor.setPower(-0.3);
                         while (opModeIsActive() && (teamMarkerMotor.isBusy())) {
 
                         }
                         teamMarkerMotor.setPower(0.0);
-                        teamMarkerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                     }
                     else{
