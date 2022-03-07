@@ -136,11 +136,11 @@ public class RedTop extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
                 .build();
         Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
-                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                .forward(10, SampleMecanumDrive.getVelocityConstraint(30, 238.72114843277868, 11.326),
                         SampleMecanumDrive.getAccelerationConstraint(50))
                 .build();
         Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
-                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+                .back(10, SampleMecanumDrive.getVelocityConstraint(30, 238.72114843277868, 11.326),
                         SampleMecanumDrive.getAccelerationConstraint(50))
                 .build();
 
@@ -155,34 +155,46 @@ public class RedTop extends LinearOpMode {
 
         for (int i = 0; i < 3; i++) {
             drivetrain.followTrajectory(Traj2);
-            input.setPower(-0.9);
+            input.setPower(-0.8);
             drivetrain.followTrajectory(Traj3);
             drivetrain.followTrajectory(Traj4);
             // spin input
-            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
-                input.setPower(-0.8);
+            if(dsensor.getDistance(DistanceUnit.CM) > 7.0) {
                 drivetrain.followTrajectory(goForward);
-                counter++;
-                sleep(500);
             }
-            for (i = 0; i < counter; i++)
-            { drivetrain.followTrajectory(goBackward);}
-            input.setPower(0);
+            else {
+                input.setPower(0.5);
+            }
+//            for (i = 0; i < counter; i++)
+//            { drivetrain.followTrajectory(goBackward);}
+            input.setPower(0.5);
             output2.setPosition(0.4);
             drivetrain.followTrajectory(Traj5);
             drivetrain.followTrajectory(Traj6);
             drivetrain.followTrajectory(Traj7);
+
             output.setTargetPosition(-2300);
             output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             output.setPower(-0.7);
+
+            while (opModeIsActive() && (output.isBusy())) {
+
+            }
+            output.setPower(0.0);
+            output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             output2.setPosition(0.7);
             sleep(500);
             output2.setPosition(0.3);
             output.setTargetPosition(0);
             output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             output.setPower(0.7);
+            while (opModeIsActive() && (output.isBusy())) {
 
-
+            }
+            output.setPower(0.0);
+            output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            
         }
 
 
@@ -439,14 +451,14 @@ public class RedTop extends LinearOpMode {
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
-                                if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                if(recognition.getRight() <= 550.0 && recognition.getTop() > 200){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
                                     first();
                                     // make this change based on positioning of duck
                                 }
                                 // 400 - 600
-                                else if(recognition.getRight() > 550.0 && recognition.getTop() < 600){
+                                else if(recognition.getRight() > 550.0 && recognition.getTop() > 200){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
                                     second();
@@ -459,14 +471,8 @@ public class RedTop extends LinearOpMode {
                                     }
                                 }
                             }else {
-                                isDuckDetected = false;
-                            }
-                            if (recognition.getLabel().equals("Cube")) {
-                                isCubeDetected = true;
-                                telemetry.addData("Object Detected", "Cube");
-                            } else {
-                                isCubeDetected = false;
                                 third();
+                                isDuckDetected = false;
                             }
                         }
                         telemetry.update();

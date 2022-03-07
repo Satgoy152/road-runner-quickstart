@@ -152,9 +152,9 @@ public class Teleop2022 extends LinearOpMode{
 
             drivetrain.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y*0.5,
-                            -gamepad1.left_stick_x*0.5,
-                            -gamepad1.right_stick_x*0.5
+                            -gamepad1.left_stick_y*0.75,
+                            -gamepad1.left_stick_x*0.75,
+                            -gamepad1.right_stick_x*0.75
                     )
             );
 
@@ -174,7 +174,8 @@ public class Teleop2022 extends LinearOpMode{
             currentHeading = poseEstimate.getHeading();
             // building the trajectories
             Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(-20.0 , 0.0, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(-20,0), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
+                            SampleMecanumDrive.getAccelerationConstraint(50))
                     .build();
             Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
                     .lineToLinearHeading(new Pose2d(-33.0 , 21.5, Math.toRadians(-70)))
@@ -185,7 +186,8 @@ public class Teleop2022 extends LinearOpMode{
                     .build();
 
             Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                    .lineToLinearHeading(new Pose2d(20.0 , -3.0, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(20,-3), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
+                            SampleMecanumDrive.getAccelerationConstraint(50))
                     .build();
 
             Trajectory Traj5 = drivetrain.trajectoryBuilder(new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()))
