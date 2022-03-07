@@ -194,7 +194,7 @@ public class RedTop extends LinearOpMode {
             }
             output.setPower(0.0);
             output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            
+
         }
 
 
