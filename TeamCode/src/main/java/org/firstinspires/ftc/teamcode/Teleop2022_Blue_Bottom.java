@@ -59,10 +59,10 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
  **/
 
 
-@TeleOp(name = "Teleop2022", group = "Concept")
+@TeleOp(name = "Teleop2022_Blue_Bottom", group = "Concept")
 
 
-public class Teleop2022 extends LinearOpMode{
+public class Teleop2022_Blue_Bottom extends LinearOpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -166,7 +166,7 @@ public class Teleop2022 extends LinearOpMode{
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
 
-            Pose2d startPose = new Pose2d(10.0 , 0.0, Math.toRadians(0));
+            Pose2d startPose = new Pose2d(0 , 24.0, Math.toRadians(0));
 
             // drivetrain.setPoseEstimate(startPose);
             currentX = poseEstimate.getX();
@@ -174,19 +174,19 @@ public class Teleop2022 extends LinearOpMode{
             currentHeading = poseEstimate.getHeading();
             // building the trajectories
             Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(-20,0), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
+                    .lineToLinearHeading(new Pose2d(0,6.0), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
                             SampleMecanumDrive.getAccelerationConstraint(50))
                     .build();
             Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                    .lineToLinearHeading(new Pose2d(-33.0 , 21.5, Math.toRadians(-70)))
+                    .lineToLinearHeading(new Pose2d(-10 , 1, Math.toRadians(-45)))
                     .build();
 
             Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                    .lineToLinearHeading(new Pose2d(-20.0 , -3.0, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(3 , 6.0, Math.toRadians(0)))
                     .build();
 
             Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                    .lineToLinearHeading(new Pose2d(20,-3), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
+                    .lineToLinearHeading(new Pose2d(3,24), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
                             SampleMecanumDrive.getAccelerationConstraint(50))
                     .build();
 
