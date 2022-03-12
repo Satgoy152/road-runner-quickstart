@@ -63,6 +63,12 @@ public class RedTop extends LinearOpMode {
     private Servo teamMarkerServo = null;
     private DistanceSensor dsensor = null;
 
+    public boolean cycleState = false;
+    public double armRestingPosition = 0.4;
+    public boolean outOfWearhouse = false;
+    public int armState = 0;
+
+
 
     @Override
 
@@ -101,6 +107,8 @@ public class RedTop extends LinearOpMode {
     }
     public void first() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+        Thread armThread = new ArmThread();
+
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
         output = hardwareMap.get(DcMotor.class, "Output");
         input = hardwareMap.get(DcMotor.class, "InputMotor");
@@ -109,6 +117,8 @@ public class RedTop extends LinearOpMode {
         teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
         dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
         int counter = 0;
+
+        armThread.start();
 
 // -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
         // creating the pose
@@ -154,38 +164,17 @@ public class RedTop extends LinearOpMode {
         output2.setPosition(0.3);
 
         for (int i = 0; i < 3; i++) {
+
             drivetrain.followTrajectory(Traj2);
-            input.setPower(-0.8);
+            armState = 1;
             drivetrain.followTrajectory(Traj3);
             drivetrain.followTrajectory(Traj4);
-            input.setPower(0.5);
-            output2.setPosition(0.4);
             drivetrain.followTrajectory(Traj5);
             drivetrain.followTrajectory(Traj6);
             drivetrain.followTrajectory(Traj7);
-
-            output.setTargetPosition(-2300);
-            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            output.setPower(-0.7);
-
-            while (opModeIsActive() && (output.isBusy())) {
-
-            }
-            output.setPower(0.0);
-            output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            output2.setPosition(0.7);
+            armState = 2;
             sleep(500);
-            output2.setPosition(0.3);
-            output.setTargetPosition(0);
-            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            output.setPower(0.7);
-            while (opModeIsActive() && (output.isBusy())) {
-
-            }
-            output.setPower(0.0);
-            output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+            armState = 1;
         }
 
 
@@ -471,4 +460,80 @@ public class RedTop extends LinearOpMode {
             }
         }
     }
+
+    private class ArmThread extends Thread
+    {
+        public ArmThread()
+        {
+            this.setName("ArmThread");
+        }
+
+        // called when tread.start is called. thread stays in loop to do what it does until exit is
+        // signaled by main code calling thread.interrupt.
+        @Override
+
+        public void run()
+        {
+
+            try
+            {
+                int teamMarkerServoState = 0;
+
+                boolean armUp = false;
+
+                while (!isInterrupted())
+                {
+                    // we record the Y values in the main class to make showing them in telemetry
+                    // easier.
+                    if(armState == 1){
+                        armState = 0;
+                        armUp = false;
+                        input.setPower(-0.8);
+                        output.setTargetPosition(0);
+                        output2.setPosition(0.3);
+                        armRestingPosition = 0.4;
+                        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        output.setPower(0.7);
+                        while (opModeIsActive() && (output.isBusy())) {
+
+                        }
+                        output.setPower(0.0);
+                        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
+
+                    if(armState == 2){
+                        armState = 0;
+                        output2.setPosition(0.5);
+                        armRestingPosition = 0.5;
+                        output.setTargetPosition(-2300);
+                        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        output.setPower(-0.7);
+                        while (opModeIsActive() && (output.isBusy())) {
+
+                        }
+                        output.setPower(0.0);
+                        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        input.setPower(0.0);
+                    }
+
+                    if(dsensor.getDistance(DistanceUnit.CM) < 7.0){
+                        output2.setPosition(armRestingPosition);
+                        input.setPower(0.5);
+                    }
+                    else{
+                        output2.setPosition(0.3);
+                    }
+
+
+
+                    idle();
+                }
+            }
+            catch (Exception e){
+
+            }
+
+        }
+    }
+
 }
