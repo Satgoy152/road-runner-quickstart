@@ -200,22 +200,25 @@ public class RedTop extends LinearOpMode {
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
                 .build();
+//        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+//                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+//                .build();
+//        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+//                .lineToLinearHeading(new Pose2d(8.0 , -5.0, Math.toRadians(0)))
+//                .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+                .splineToLinearHeading(new Pose2d(8.0,-5,Math.toRadians(-70)),Math.toRadians(0))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(8.0 , -5.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
                 .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
                 .build();
-        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
                 .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
                 .build();
-        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
                 .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
                 .build();
-        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
+        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
                 .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
                 .build();
         Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
@@ -246,7 +249,7 @@ public class RedTop extends LinearOpMode {
             drivetrain.followTrajectory(Traj2);
             input.setPower(-0.9);
             drivetrain.followTrajectory(Traj3);
-            drivetrain.followTrajectory(Traj4);
+
             // spin input
             while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
                 input.setPower(-0.8);
@@ -258,9 +261,9 @@ public class RedTop extends LinearOpMode {
             { drivetrain.followTrajectory(goBackward);}
             input.setPower(0);
             output2.setPosition(0.4);
+            drivetrain.followTrajectory(Traj4);
             drivetrain.followTrajectory(Traj5);
             drivetrain.followTrajectory(Traj6);
-            drivetrain.followTrajectory(Traj7);
             output.setTargetPosition(-2300);
             output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             output.setPower(-0.7);
