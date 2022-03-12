@@ -67,6 +67,7 @@ public class RedTop extends LinearOpMode {
     public double armRestingPosition = 0.4;
     public boolean outOfWearhouse = false;
     public int armState = 0;
+    public int autoLevel = 0;
 
 
 
@@ -76,6 +77,7 @@ public class RedTop extends LinearOpMode {
 
 
         initVuforia();
+
         initTfod();
 
         if (tfod != null) {
@@ -96,16 +98,14 @@ public class RedTop extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
+        autoLevel = checkForDuck();
+
         waitForStart();
 
-        checkForDuck();
-
-
-
-
+        first(autoLevel);
 
     }
-    public void first() {
+    public void first(int level) {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         Thread armThread = new ArmThread();
 
@@ -125,7 +125,7 @@ public class RedTop extends LinearOpMode {
         Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-34.0 , 23, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-34.0 , 23, Math.toRadians(-80)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
                 .lineToLinearHeading(new Pose2d(-20.0 , -7.0, Math.toRadians(0)))
@@ -134,16 +134,16 @@ public class RedTop extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(12.0 , -7.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                .lineToLinearHeading(new Pose2d(20.0, 7, Math.toRadians(-40)))
+                .lineToLinearHeading(new Pose2d(22.0, 0, Math.toRadians(0)))
                 .build();
         Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
-                .lineToLinearHeading(new Pose2d(12.0 , -7.0, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(12.0 , -9.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , -7.0, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-20.0 , -9.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
-                .lineToLinearHeading(new Pose2d(-34.0 , 23, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-34.0 , 14, Math.toRadians(-80)))
                 .build();
 //        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
 //                .forward(10, SampleMecanumDrive.getVelocityConstraint(30, 238.72114843277868, 11.326),
@@ -157,11 +157,12 @@ public class RedTop extends LinearOpMode {
 
 
         // start of auto
+        armState = 3;
         drivetrain.followTrajectory(Traj1);
         // raise output, turn servo
-        output2.setPosition(0.7);
+        armRestingPosition = 0.7;
         sleep(500);
-        output2.setPosition(0.3);
+
 
         for (int i = 0; i < 3; i++) {
 
@@ -170,16 +171,15 @@ public class RedTop extends LinearOpMode {
             drivetrain.followTrajectory(Traj3);
             drivetrain.followTrajectory(Traj4);
             drivetrain.followTrajectory(Traj5);
+            armState = 2;
             drivetrain.followTrajectory(Traj6);
             drivetrain.followTrajectory(Traj7);
-            armState = 2;
+            armRestingPosition = 0.7;
             sleep(500);
             armState = 1;
         }
 
-
-
-
+        armThread.interrupt();
 
     }// first rung level
     public void second() {
@@ -402,7 +402,7 @@ public class RedTop extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
 
-    private void checkForDuck(){
+    public int checkForDuck(){
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 if (tfod != null) {
@@ -433,25 +433,21 @@ public class RedTop extends LinearOpMode {
                                 if(recognition.getRight() <= 550.0 && recognition.getTop() > 200){
                                     // Lift arm to first rung level
                                     telemetry.addData("First Rung Level", ".");
-                                    first();
+                                    //first();
+                                    return 1;
                                     // make this change based on positioning of duck
                                 }
                                 // 400 - 600
                                 else if(recognition.getRight() > 550.0 && recognition.getTop() > 200){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
-                                    second();
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
-
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
+                                    //second();
+                                    return 2;
                                 }
                             }else {
-                                third();
+                                //third();
                                 isDuckDetected = false;
+                                return 3;
                             }
                         }
                         telemetry.update();
@@ -459,6 +455,7 @@ public class RedTop extends LinearOpMode {
                 }
             }
         }
+        return 0;
     }
 
     private class ArmThread extends Thread
@@ -515,6 +512,22 @@ public class RedTop extends LinearOpMode {
                         output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         input.setPower(0.0);
                     }
+
+                    if(armState == 3){
+                        armState = 0;
+                        output2.setPosition(0.5);
+                        armRestingPosition = 0.5;
+                        output.setTargetPosition(-500);
+                        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        output.setPower(-0.7);
+                        while (opModeIsActive() && (output.isBusy())) {
+
+                        }
+                        output.setPower(0.0);
+                        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        input.setPower(0.0);
+                    }
+
 
                     if(dsensor.getDistance(DistanceUnit.CM) < 7.0){
                         output2.setPosition(armRestingPosition);
