@@ -152,9 +152,9 @@ public class Teleop2022_Red_Top extends LinearOpMode{
 
             drivetrain.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y*0.75,
-                            -gamepad1.left_stick_x*0.75,
-                            -gamepad1.right_stick_x*0.75
+                            -gamepad1.left_stick_y*0.6,
+                            -gamepad1.left_stick_x*0.6,
+                            -gamepad1.right_stick_x*0.6
                     )
             );
 
@@ -178,7 +178,7 @@ public class Teleop2022_Red_Top extends LinearOpMode{
                             SampleMecanumDrive.getAccelerationConstraint(50))
                     .build();
             Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                    .lineToLinearHeading(new Pose2d(-33.0 , 21.5, Math.toRadians(-70)))
+                    .lineToLinearHeading(new Pose2d(-33.0 , 21.5, Math.toRadians(-80)))
                     .build();
 
             Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
@@ -202,7 +202,7 @@ public class Teleop2022_Red_Top extends LinearOpMode{
                 drivetrain.followTrajectory(Traj2);
 
             }
-            if(gamepad1.dpad_up && outOfWearhouse){
+            if(gamepad2.y && outOfWearhouse){
                 outOfWearhouse = false;
                 armState = 1;
                 drivetrain.followTrajectory(Traj3);
@@ -258,8 +258,6 @@ public class Teleop2022_Red_Top extends LinearOpMode{
 
         armThread.interrupt();
     }
-
-
 
     private class ArmThread extends Thread
     {
