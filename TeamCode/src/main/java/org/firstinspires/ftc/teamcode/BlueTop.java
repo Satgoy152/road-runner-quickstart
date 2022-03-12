@@ -232,7 +232,7 @@ public class BlueTop extends LinearOpMode {
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
                                 if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
-                                    // Lift arm to first rung level
+                                    // Lift arm to path rung level
                                     telemetry.addData("First Rung Level", ".");
 
                                     output2.setPosition(0.7);

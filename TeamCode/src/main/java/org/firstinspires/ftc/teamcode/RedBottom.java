@@ -148,7 +148,7 @@ public class RedBottom extends LinearOpMode {
         // finished with pathway
 
 
-    }// first rung level
+    }// path rung level
     public void second() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
@@ -350,7 +350,7 @@ public class RedBottom extends LinearOpMode {
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
                                 if(recognition.getRight() <= 550.0 && recognition.getTop() < 600){
-                                    // Lift arm to first rung level
+                                    // Lift arm to path rung level
                                     telemetry.addData("First Rung Level", ".");
                                     telemetry.update();
                                     first();

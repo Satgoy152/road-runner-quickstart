@@ -101,7 +101,7 @@ public class VuforiaDetection extends LinearOpMode {
     @Override
     public void runOpMode() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
+        // path.
         initVuforia();
         initTfod();
 
@@ -157,7 +157,7 @@ public class VuforiaDetection extends LinearOpMode {
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
                                 if(recognition.getRight() <= 550.0 && recognition.getTop() < 600){
-                                    // Lift arm to first rung level
+                                    // Lift arm to path rung level
                                     telemetry.addData("First Rung Level", ".");
                                 }
                                 // 400 - 600

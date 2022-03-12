@@ -108,7 +108,7 @@ public class Vuforia extends LinearOpMode {
     @Override
     public void runOpMode() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
+        // path.
         initVuforia();
         initTfod();
 

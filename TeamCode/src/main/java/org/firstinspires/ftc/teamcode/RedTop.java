@@ -102,10 +102,11 @@ public class RedTop extends LinearOpMode {
 
         waitForStart();
 
-        first(autoLevel);
+        path(autoLevel);
 
     }
-    public void first(int level) {
+    public void path(int level) {
+
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         Thread armThread = new ArmThread();
 
@@ -125,24 +126,25 @@ public class RedTop extends LinearOpMode {
         Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-34.0 , 23, Math.toRadians(-80)))
+                .lineToLinearHeading(new Pose2d(-34.0 , 28, Math.toRadians(-80)))
                 .build();
+//        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+//                .lineToLinearHeading(new Pose2d(-20.0 , -7.0, Math.toRadians(0)))
+//                .build();
+
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , -7.0, Math.toRadians(0)))
+                .splineTo(new Vector2d(10 , -5), Math.toRadians(-30))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(12.0 , -7.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
                 .lineToLinearHeading(new Pose2d(22.0, 0, Math.toRadians(0)))
                 .build();
-        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
                 .lineToLinearHeading(new Pose2d(12.0 , -9.0, Math.toRadians(0)))
                 .build();
-        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
                 .lineToLinearHeading(new Pose2d(-20.0 , -9.0, Math.toRadians(0)))
                 .build();
-        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
+        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
                 .lineToLinearHeading(new Pose2d(-34.0 , 14, Math.toRadians(-80)))
                 .build();
 //        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
@@ -157,13 +159,22 @@ public class RedTop extends LinearOpMode {
 
 
         // start of auto
-        armState = 3;
+        if(level == 1){
+            armState = 3;
+        }
+        if(level == 2){
+            armState = 4;
+        }
+        if(level == 3){
+            armState = 5;
+        }
         drivetrain.followTrajectory(Traj1);
         // raise output, turn servo
         armRestingPosition = 0.7;
         sleep(500);
+        drivetrain.followTrajectory(Traj2);
 
-
+/*
         for (int i = 0; i < 3; i++) {
 
             drivetrain.followTrajectory(Traj2);
@@ -173,211 +184,211 @@ public class RedTop extends LinearOpMode {
             drivetrain.followTrajectory(Traj5);
             armState = 2;
             drivetrain.followTrajectory(Traj6);
-            drivetrain.followTrajectory(Traj7);
+
             armRestingPosition = 0.7;
             sleep(500);
             armState = 1;
         }
-
+*/
         armThread.interrupt();
 
-    }// first rung level
-    public void second() {
-        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
-        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
-        output = hardwareMap.get(DcMotor.class, "Output");
-        input = hardwareMap.get(DcMotor.class, "InputMotor");
-        output2 = hardwareMap.get(Servo.class, "OutputServo");
-        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
-        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
-        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
-        int counter = 0;
-
-// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
-        // creating the pose
-        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
-        // building the trajectories
-        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
-                .build();
+    }// path rung level
+//    public void second() {
+//        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+//        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
+//        output = hardwareMap.get(DcMotor.class, "Output");
+//        input = hardwareMap.get(DcMotor.class, "InputMotor");
+//        output2 = hardwareMap.get(Servo.class, "OutputServo");
+//        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
+//        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+//        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
+//        int counter = 0;
+//
+//// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
+//        // creating the pose
+//        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
+//        // building the trajectories
+//        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+//                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
+//                .build();
+////        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+////                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+////                .build();
+////        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+////                .lineToLinearHeading(new Pose2d(8.0 , -5.0, Math.toRadians(0)))
+////                .build();
+//        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+//                .splineToLinearHeading(new Pose2d(8.0,-5,Math.toRadians(-70)),Math.toRadians(0))
+//                .build();
+//        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+//                .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
+//                .build();
+//        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+//                .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
+//                .build();
+//        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+//                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+//                .build();
+//        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
+//                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
+//                .build();
+//        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
+//                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+//                        SampleMecanumDrive.getAccelerationConstraint(50))
+//                .build();
+//        Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
+//                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+//                        SampleMecanumDrive.getAccelerationConstraint(50))
+//                .build();
+//
+//
+//
+//        // start of auto
+//        drivetrain.followTrajectory(Traj1);
+//        // raise output, turn servo
+//        output.setTargetPosition(-1600);
+//        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        output.setPower(-0.7);
+//        output2.setPosition(0.7);
+//        sleep(500);
+//        output2.setPosition(0.3);
+//        output.setTargetPosition(0);
+//        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        output.setPower(0.7);
+//
+//        for (int i = 0; i < 3; i++) {
+//            drivetrain.followTrajectory(Traj2);
+//            input.setPower(-0.9);
+//            drivetrain.followTrajectory(Traj3);
+//
+//            // spin input
+//            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
+//                input.setPower(-0.8);
+//                drivetrain.followTrajectory(goForward);
+//                counter++;
+//                sleep(500);
+//            }
+//            for (i = 0; i < counter; i++)
+//            { drivetrain.followTrajectory(goBackward);}
+//            input.setPower(0);
+//            output2.setPosition(0.4);
+//            drivetrain.followTrajectory(Traj4);
+//            drivetrain.followTrajectory(Traj5);
+//            drivetrain.followTrajectory(Traj6);
+//            output.setTargetPosition(-2300);
+//            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            output.setPower(-0.7);
+//            output2.setPosition(0.7);
+//            sleep(500);
+//            output2.setPosition(0.3);
+//            output.setTargetPosition(0);
+//            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            output.setPower(0.7);
+//
+//
+//        }
+//
+//
+//
+//
+//
+//    }// second rung level
+//    public void third() {
+//        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+//        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
+//        output = hardwareMap.get(DcMotor.class, "Output");
+//        input = hardwareMap.get(DcMotor.class, "InputMotor");
+//        output2 = hardwareMap.get(Servo.class, "OutputServo");
+//        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
+//        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+//        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
+//        int counter = 0;
+//
+//// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
+//        // creating the pose
+//        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
+//        // building the trajectories
+//        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+//                .lineToLinearHeading(new Pose2d(-34.0 , 23.5, Math.toRadians(-60)))
+//                .build();
 //        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
 //                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
 //                .build();
 //        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-//                .lineToLinearHeading(new Pose2d(8.0 , -5.0, Math.toRadians(0)))
+//                .lineToLinearHeading(new Pose2d(10.0 , -5.0, Math.toRadians(0)))
 //                .build();
-        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .splineToLinearHeading(new Pose2d(8.0,-5,Math.toRadians(-70)),Math.toRadians(0))
-                .build();
-        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
-                .build();
-        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
-                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
-                .build();
-        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
-                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
-                        SampleMecanumDrive.getAccelerationConstraint(50))
-                .build();
-        Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
-                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
-                        SampleMecanumDrive.getAccelerationConstraint(50))
-                .build();
-
-
-
-        // start of auto
-        drivetrain.followTrajectory(Traj1);
-        // raise output, turn servo
-        output.setTargetPosition(-1600);
-        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        output.setPower(-0.7);
-        output2.setPosition(0.7);
-        sleep(500);
-        output2.setPosition(0.3);
-        output.setTargetPosition(0);
-        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        output.setPower(0.7);
-
-        for (int i = 0; i < 3; i++) {
-            drivetrain.followTrajectory(Traj2);
-            input.setPower(-0.9);
-            drivetrain.followTrajectory(Traj3);
-
-            // spin input
-            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
-                input.setPower(-0.8);
-                drivetrain.followTrajectory(goForward);
-                counter++;
-                sleep(500);
-            }
-            for (i = 0; i < counter; i++)
-            { drivetrain.followTrajectory(goBackward);}
-            input.setPower(0);
-            output2.setPosition(0.4);
-            drivetrain.followTrajectory(Traj4);
-            drivetrain.followTrajectory(Traj5);
-            drivetrain.followTrajectory(Traj6);
-            output.setTargetPosition(-2300);
-            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            output.setPower(-0.7);
-            output2.setPosition(0.7);
-            sleep(500);
-            output2.setPosition(0.3);
-            output.setTargetPosition(0);
-            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            output.setPower(0.7);
-
-
-        }
-
-
-
-
-
-    }// second rung level
-    public void third() {
-        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
-        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
-        output = hardwareMap.get(DcMotor.class, "Output");
-        input = hardwareMap.get(DcMotor.class, "InputMotor");
-        output2 = hardwareMap.get(Servo.class, "OutputServo");
-        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
-        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
-        dsensor = hardwareMap.get(DistanceSensor.class, "dsensor");
-        int counter = 0;
-
-// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
-        // creating the pose
-        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
-        // building the trajectories
-        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-34.0 , 23.5, Math.toRadians(-60)))
-                .build();
-        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(10.0 , -5.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
-                .build();
-        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
-                .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
-                .build();
-        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
-                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
-                .build();
-        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
-                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
-                        SampleMecanumDrive.getAccelerationConstraint(50))
-                .build();
-        Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
-                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
-                        SampleMecanumDrive.getAccelerationConstraint(50))
-                .build();
-
-
-
-        // start of auto
-        drivetrain.followTrajectory(Traj1);
-        // raise output, turn servo
-        output.setTargetPosition(-2300);
-        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        output.setPower(-0.7);
-        output2.setPosition(0.7);
-        sleep(500);
-        output2.setPosition(0.3);
-        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        output.setPower(0.7);
-
-        for (int i = 0; i < 3; i++) {
-            drivetrain.followTrajectory(Traj2);
-            input.setPower(-0.9);
-            drivetrain.followTrajectory(Traj3);
-            drivetrain.followTrajectory(Traj4);
-            // spin input
-            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
-                input.setPower(-0.9);
-                drivetrain.followTrajectory(goForward);
-                counter++;
-                sleep(500);
-            }
-            for (i = 0; i < counter; i++)
-            { drivetrain.followTrajectory(goBackward);}
-            input.setPower(0);
-            output2.setPosition(0.4);
-            drivetrain.followTrajectory(Traj5);
-            drivetrain.followTrajectory(Traj6);
-            drivetrain.followTrajectory(Traj7);
-            output.setTargetPosition(-2300);
-            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            output.setPower(-0.7);
-            output2.setPosition(0.7);
-            sleep(500);
-            output2.setPosition(0.3);
-            output.setTargetPosition(0);
-            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            output.setPower(0.7);
-
-
-        }
-
-
-
-
-
-    }// third rung level
+//        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+//                .lineToLinearHeading(new Pose2d(16.0, 3.0, Math.toRadians(-30)))
+//                .build();
+//        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+//                .lineToLinearHeading(new Pose2d(8.0 , -3.0, Math.toRadians(0)))
+//                .build();
+//        Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
+//                .lineToLinearHeading(new Pose2d(-20.0 , -5.0, Math.toRadians(0)))
+//                .build();
+//        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
+//                .lineToLinearHeading(new Pose2d(-34.0 , 22.5, Math.toRadians(-70)))
+//                .build();
+//        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
+//                .forward(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+//                        SampleMecanumDrive.getAccelerationConstraint(50))
+//                .build();
+//        Trajectory goBackward = drivetrain.trajectoryBuilder(goForward.end())
+//                .back(6, SampleMecanumDrive.getVelocityConstraint(15, 238.72114843277868, 11.326),
+//                        SampleMecanumDrive.getAccelerationConstraint(50))
+//                .build();
+//
+//
+//
+//        // start of auto
+//        drivetrain.followTrajectory(Traj1);
+//        // raise output, turn servo
+//        output.setTargetPosition(-2300);
+//        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        output.setPower(-0.7);
+//        output2.setPosition(0.7);
+//        sleep(500);
+//        output2.setPosition(0.3);
+//        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        output.setPower(0.7);
+//
+//        for (int i = 0; i < 3; i++) {
+//            drivetrain.followTrajectory(Traj2);
+//            input.setPower(-0.9);
+//            drivetrain.followTrajectory(Traj3);
+//            drivetrain.followTrajectory(Traj4);
+//            // spin input
+//            while (dsensor.getDistance(DistanceUnit.CM) > 7.0) {
+//                input.setPower(-0.9);
+//                drivetrain.followTrajectory(goForward);
+//                counter++;
+//                sleep(500);
+//            }
+//            for (i = 0; i < counter; i++)
+//            { drivetrain.followTrajectory(goBackward);}
+//            input.setPower(0);
+//            output2.setPosition(0.4);
+//            drivetrain.followTrajectory(Traj5);
+//            drivetrain.followTrajectory(Traj6);
+//            drivetrain.followTrajectory(Traj7);
+//            output.setTargetPosition(-2300);
+//            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            output.setPower(-0.7);
+//            output2.setPosition(0.7);
+//            sleep(500);
+//            output2.setPosition(0.3);
+//            output.setTargetPosition(0);
+//            output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            output.setPower(0.7);
+//
+//
+//        }
+//
+//
+//
+//
+//
+//    }// third rung level
 
     private void initVuforia() {
         /*
@@ -434,9 +445,9 @@ public class RedTop extends LinearOpMode {
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
                                 if(recognition.getRight() <= 550.0 && recognition.getTop() > 200){
-                                    // Lift arm to first rung level
+                                    // Lift arm to path rung level
                                     telemetry.addData("First Rung Level", ".");
-                                    //first();
+                                    //path();
                                     return 1;
                                     // make this change based on positioning of duck
                                 }
@@ -520,7 +531,37 @@ public class RedTop extends LinearOpMode {
                         armState = 0;
                         output2.setPosition(0.5);
                         armRestingPosition = 0.5;
-                        output.setTargetPosition(-500);
+                        output.setTargetPosition(-300);
+                        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        output.setPower(-0.7);
+                        while (opModeIsActive() && (output.isBusy())) {
+
+                        }
+                        output.setPower(0.0);
+                        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        input.setPower(0.0);
+                    }
+
+                    if(armState == 4){
+                        armState = 0;
+                        output2.setPosition(0.5);
+                        armRestingPosition = 0.5;
+                        output.setTargetPosition(-1200);
+                        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        output.setPower(-0.7);
+                        while (opModeIsActive() && (output.isBusy())) {
+
+                        }
+                        output.setPower(0.0);
+                        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        input.setPower(0.0);
+                    }
+
+                    if(armState == 5){
+                        armState = 0;
+                        output2.setPosition(0.5);
+                        armRestingPosition = 0.5;
+                        output.setTargetPosition(-2300);
                         output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         output.setPower(-0.7);
                         while (opModeIsActive() && (output.isBusy())) {
