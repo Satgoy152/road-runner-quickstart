@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-@Autonomous(name = "bluebottom", group = "Concept")
+@Autonomous(name = "Bluebottom", group = "Concept")
 public class BlueBottom extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
@@ -52,6 +51,7 @@ public class BlueBottom extends LinearOpMode {
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */
+
     private DcMotor teamMarkerMotor = null;
     private DcMotor output = null;
     private DcMotor input = null;
@@ -59,8 +59,9 @@ public class BlueBottom extends LinearOpMode {
     private Servo output2 = null;
     private CRServo carouselArm = null;
     private Servo teamMarkerServo = null;
+    private boolean isDetected = false;
+
     private TFObjectDetector tfod;
-    SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
 
     @Override
 
@@ -88,10 +89,14 @@ public class BlueBottom extends LinearOpMode {
 
         waitForStart();
 
-        checkForDuck();}
+        checkForDuck();
 
 
-    public void path() {
+
+
+
+    }
+    public void first() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
         output = hardwareMap.get(DcMotor.class, "Output");
@@ -101,41 +106,189 @@ public class BlueBottom extends LinearOpMode {
         teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
 // -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
         // creating the pose
-        Pose2d startPose = new Pose2d(12.0 , -65.5, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(0 , 0, Math.toRadians(90));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-32.0, -24.0, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-17.5, 44, Math.toRadians(10)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(-57.0, -60.0, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-19, 20, Math.toRadians(0)))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(-60.0, -36.0, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-32,-21, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+                .lineToLinearHeading(new Pose2d(-32,22, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                .lineToLinearHeading(new Pose2d(-32,39, Math.toRadians(270)))
                 .build();
 
         // start of auto
+        output2.setPosition(0.4);
         drivetrain.followTrajectory(Traj1);
         // raise the output, turn the servo
 
+
+        output2.setPosition(0.7);
+        sleep(500);
+        output2.setPosition(0.3);
+
+
         drivetrain.followTrajectory(Traj2);
+        drivetrain.followTrajectory(Traj3);
+        drivetrain.followTrajectory(Traj4);
         // spinning carousel
         carouselArm.setPower(-1.0);
-        sleep(3000);
+        sleep(4000);
         carouselArm.setPower(0.0);
-        drivetrain.followTrajectory(Traj3);
+        drivetrain.followTrajectory(Traj5);
         // finished with pathway
 
 
-    }
+    }// path rung level
+    public void second() {
+        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
+        output = hardwareMap.get(DcMotor.class, "Output");
+        input = hardwareMap.get(DcMotor.class, "InputMotor");
+        output2 = hardwareMap.get(Servo.class, "OutputServo");
+        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
+        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
+        // creating the pose
+        Pose2d startPose = new Pose2d(0 , 0, Math.toRadians(90));
+        // building the trajectories
+        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(17.5, 42, Math.toRadians(170)))
+                .build();
+        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+                .lineToLinearHeading(new Pose2d(19, 20, Math.toRadians(180)))
+                .build();
+        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(-32,21, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+                .lineToLinearHeading(new Pose2d(-32,22, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                .lineToLinearHeading(new Pose2d(-32,39, Math.toRadians(270)))
+                .build();
 
 
 
+        // start of auto
+        output2.setPosition(0.4);
+        drivetrain.followTrajectory(Traj1);
+        // raise the output, turn the servo
 
 
+        output.setTargetPosition(-1200);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(-0.7);
+        while (opModeIsActive() && (output.isBusy())) {
+
+        }
+        output.setPower(0.0);
+        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        output2.setPosition(0.7);
+        sleep(1000);
+        output2.setPosition(0.3);
+
+        output.setTargetPosition(0);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(0.7);
+        while (opModeIsActive() && (output.isBusy())) {
+
+        }
+        output.setPower(0.0);
+        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        drivetrain.followTrajectory(Traj2);
+        drivetrain.followTrajectory(Traj3);
+        drivetrain.followTrajectory(Traj4);
+        // spinning carousel
+        carouselArm.setPower(-1.0);
+        sleep(4000);
+        carouselArm.setPower(0.0);
+        drivetrain.followTrajectory(Traj5);
+        // finished with pathway
 
 
+    }// second rung level
+    public void third() {
+        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+        teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
+        output = hardwareMap.get(DcMotor.class, "Output");
+        input = hardwareMap.get(DcMotor.class, "InputMotor");
+        output2 = hardwareMap.get(Servo.class, "OutputServo");
+        carouselArm = hardwareMap.get(CRServo.class, "CarouselArmServo");
+        teamMarkerServo = hardwareMap.get(Servo.class, "TeamMarkerServo");
+// -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
+        // creating the pose
+        Pose2d startPose = new Pose2d(0 , 0, Math.toRadians(90));
+        // building the trajectories
+        Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(17.5, 44, Math.toRadians(170)))
+                .build();
+        Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
+                .lineToLinearHeading(new Pose2d(19, 20, Math.toRadians(180)))
+                .build();
+        Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
+                .lineToLinearHeading(new Pose2d(-32,21, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
+                .lineToLinearHeading(new Pose2d(-32,22, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
+                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .build();
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                .lineToLinearHeading(new Pose2d(-32,39, Math.toRadians(270)))
+                .build();
+
+        // start of auto
+        output2.setPosition(0.4);
+        drivetrain.followTrajectory(Traj1);
+        // raise the output, turn the servo
 
 
+        output.setTargetPosition(-2300);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(-0.7);
+        while (opModeIsActive() && (output.isBusy())) {
+
+        }
+        output.setPower(0.0);
+        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        output2.setPosition(0.7);
+        sleep(1000);
+        output2.setPosition(0.3);
+
+        output.setTargetPosition(0);
+        output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        output.setPower(0.7);
+        while (opModeIsActive() && (output.isBusy())) {
+
+        }
+        output.setPower(0.0);
+        output.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        drivetrain.followTrajectory(Traj2);
+        drivetrain.followTrajectory(Traj3);
+        drivetrain.followTrajectory(Traj4);
+        // spinning carousel
+        carouselArm.setPower(-1.0);
+        sleep(4000);
+        carouselArm.setPower(0.0);
+        drivetrain.followTrajectory(Traj5);
+        // finished with pathway
+
+
+    }// third rung level
 
 
     private void initVuforia() {
@@ -157,7 +310,7 @@ public class BlueBottom extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
@@ -166,7 +319,7 @@ public class BlueBottom extends LinearOpMode {
 
     private void checkForDuck(){
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !isDetected) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -178,6 +331,10 @@ public class BlueBottom extends LinearOpMode {
                         int i = 0;
                         boolean isDuckDetected = false;
                         boolean isCubeDetected = false;
+                        if(updatedRecognitions.size() == 0){
+                            third();
+                            isDetected = true;
+                        }
                         for (Recognition recognition : updatedRecognitions) {
                             telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                             telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
@@ -188,70 +345,31 @@ public class BlueBottom extends LinearOpMode {
 
                             // check label to see if the camera now sees a Duck
                             if (recognition.getLabel().equals("Duck")) {
-                                path();
+
                                 isDuckDetected = true;
                                 telemetry.addData("Object Detected", "Duck");
                                 // 191 - 300
-                                if(recognition.getRight() < 300.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                if(recognition.getRight() <= 550.0 && recognition.getTop() < 600){
                                     // Lift arm to path rung level
                                     telemetry.addData("First Rung Level", ".");
-
-                                    output2.setPosition(0.7);
-                                    sleep(1000);
-                                    output2.setPosition(0);
-                                    sleep(1200);// make this change based on positioning of duck
+                                    telemetry.update();
+                                    first();
+                                    isDetected = true;
+                                    // make this change based on positioning of duck
                                 }
                                 // 400 - 600
-                                else if(recognition.getRight() > 400.0 && recognition.getRight() < 600.0 && recognition.getBottom() > 600 && recognition.getBottom() < 700){
+                                else if(recognition.getRight() > 550.0 && recognition.getTop() < 600){
                                     // Lift arm to second rung level
                                     telemetry.addData("Second Rung Level", ".");
-
-                                    output.setTargetPosition(-1600);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(-0.7);
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
-
-                                    output2.setPosition(0.7);
-                                    sleep(1000);
-                                    output2.setPosition(0);
-                                    sleep(1200);// make this change based on positioning of duck
-
-                                    output.setTargetPosition(0);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(0.7);
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
+                                    telemetry.update();
+                                    second();
+                                    isDetected = true;
                                 }
-                                else if(recognition.getBottom() > 600 && recognition.getBottom() < 700){
-                                    // Lift arm to third rung level
-                                    telemetry.addData("Third Rung Level", ".");
-                                    output.setTargetPosition(-3200);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(-0.7);
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
-
-                                    output2.setPosition(0.7);
-                                    sleep(1000);
-                                    output2.setPosition(0);
-                                    sleep(1200);// make this change based on positioning of duck
-
-                                    output.setTargetPosition(0);
-                                    output.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                                    output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                    output.setPower(0.7);
-                                    while(output.isBusy() && opModeIsActive()) {
-                                        //Loop body can be empty
-                                    }
-                                }
-                            } else {
+                            }else {
+                                telemetry.addData("Third Rung Level", ".");
+                                telemetry.update();
+                                third();
+                                isDetected = true;
                                 isDuckDetected = false;
                             }
                         }

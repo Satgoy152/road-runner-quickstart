@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-@Autonomous(name = "Bluetop", group = "Concept")
-public class BlueTop extends LinearOpMode {
+@Autonomous(name = "Redtopcopy", group = "Concept")
+public class RedTopCopy extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
             "Ball",
@@ -121,31 +121,28 @@ public class BlueTop extends LinearOpMode {
 
 // -------------------------------------------------- starting pathways ----------------------------------------------------------------------------------
         // creating the pose
-        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(-20 , 0, Math.toRadians(90));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-36.0 , -23, Math.toRadians(80)))
+                .lineToLinearHeading(new Pose2d(-34.0 , 23, Math.toRadians(-80)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , 5.0, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-20.0 , -7.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(12.0 , 5.0, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(12.0 , -7.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                .lineToLinearHeading(new Pose2d(20.0, 1, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(22.0, 0, Math.toRadians(0)))
                 .build();
-        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj3.end())
-                .lineToLinearHeading(new Pose2d(12.0 , 11.0, Math.toRadians(0)))
+        Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                .lineToLinearHeading(new Pose2d(12.0 , -9.0, Math.toRadians(0)))
                 .build();
         Trajectory Traj6 = drivetrain.trajectoryBuilder(Traj5.end())
-                .lineToLinearHeading(new Pose2d(-20.0 , 11.0, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-20.0 , -9.0, Math.toRadians(0)))
                 .build();
-//        Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
-//                .lineToLinearHeading(new Pose2d(-34.0 , -14, Math.toRadians(80)))
-//                .build();
         Trajectory Traj7 = drivetrain.trajectoryBuilder(Traj6.end())
-                .lineToLinearHeading(new Pose2d(-34.0 , -14, Math.toRadians(100)))
+                .lineToLinearHeading(new Pose2d(-34.0 , 14, Math.toRadians(-80)))
                 .build();
 //        Trajectory goForward = drivetrain.trajectoryBuilder(Traj3.end())
 //                .forward(10, SampleMecanumDrive.getVelocityConstraint(30, 238.72114843277868, 11.326),
@@ -159,7 +156,6 @@ public class BlueTop extends LinearOpMode {
 
         armThread.start();
 
-        // start of auto
         // start of auto
         if(level == 1){
             armState = 3;
@@ -179,7 +175,7 @@ public class BlueTop extends LinearOpMode {
         drivetrain.followTrajectory(Traj2);
         armState = 1;
         drivetrain.followTrajectory(Traj3);
-        //drivetrain.followTrajectory(Traj4);
+        drivetrain.followTrajectory(Traj4);
         drivetrain.followTrajectory(Traj5);
         armState = 2;
         drivetrain.followTrajectory(Traj6);

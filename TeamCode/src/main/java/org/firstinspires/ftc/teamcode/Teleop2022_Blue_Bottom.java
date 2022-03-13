@@ -166,7 +166,7 @@ public class Teleop2022_Blue_Bottom extends LinearOpMode{
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
 
-            Pose2d startPose = new Pose2d(0 , 24.0, Math.toRadians(0));
+            Pose2d startPose = new Pose2d(0 , 0, Math.toRadians(0));
 
             // drivetrain.setPoseEstimate(startPose);
             currentX = poseEstimate.getX();
@@ -174,7 +174,7 @@ public class Teleop2022_Blue_Bottom extends LinearOpMode{
             currentHeading = poseEstimate.getHeading();
             // building the trajectories
             Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(0,6.0), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
+                    .lineToLinearHeading(new Pose2d(-20,0), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
                             SampleMecanumDrive.getAccelerationConstraint(50))
                     .build();
             Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())

@@ -174,20 +174,23 @@ public class Teleop2022_Red_Bottom extends LinearOpMode{
             currentHeading = poseEstimate.getHeading();
             // building the trajectories
             Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(-20,0), SampleMecanumDrive.getVelocityConstraint(55, 238.72114843277868, 11.326),
-                            SampleMecanumDrive.getAccelerationConstraint(50))
+                    .lineToLinearHeading(new Pose2d(-20,0, Math.toRadians(0)))
                     .build();
+
             Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                    .lineToLinearHeading(new Pose2d(-26,0, Math.toRadians(60)), SampleMecanumDrive.getVelocityConstraint(40, 238.72114843277868, 11.326),
-                            SampleMecanumDrive.getAccelerationConstraint(50))
+                    .lineToLinearHeading(new Pose2d(-26,-1, Math.toRadians(70)))
                     .build();
 
             Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                    .lineToLinearHeading(new Pose2d(-26 , 3, Math.toRadians(-60)))
+                    .lineToLinearHeading(new Pose2d(-26 , 0, Math.toRadians(0.0)))
                     .build();
 
             Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                    .lineToLinearHeading(new Pose2d(4 , 3, Math.toRadians(-60)))
+                    .lineToLinearHeading(new Pose2d(0, 3, Math.toRadians(0.0)))
+                    .build();
+
+            Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
+                    .lineToLinearHeading(new Pose2d( 1.0, 1.0, 1.0))
                     .build();
 
             if(gamepad1.dpad_up && !outOfWearhouse){
@@ -197,12 +200,12 @@ public class Teleop2022_Red_Bottom extends LinearOpMode{
                 drivetrain.followTrajectory(Traj2);
 
             }
-            if(gamepad2.y && outOfWearhouse){
+            if(gamepad1.dpad_up && outOfWearhouse){
                 outOfWearhouse = false;
                 armState = 1;
-                sleep(500);
+
                 drivetrain.followTrajectory(Traj3);
-                drivetrain.followTrajectory(Traj4);
+                //drivetrain.followTrajectory(Traj4);
 
                 currentX = poseEstimate.getX();
                 currentY = poseEstimate.getY();
@@ -211,6 +214,9 @@ public class Teleop2022_Red_Bottom extends LinearOpMode{
             }
 
             if(gamepad1.dpad_right){
+
+                //drivetrain.followTrajectory(Traj4);
+
 
                 // drivetrain.followTrajectory(Traj5);
 
@@ -301,7 +307,7 @@ public class Teleop2022_Red_Bottom extends LinearOpMode{
                         armState = 0;
                         output2.setPosition(0.5);
                         armRestingPosition = 0.5;
-                        output.setTargetPosition(-500);
+                        output.setTargetPosition(-200);
                         output.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         output.setPower(-0.7);
                         while (opModeIsActive() && (output.isBusy())) {
