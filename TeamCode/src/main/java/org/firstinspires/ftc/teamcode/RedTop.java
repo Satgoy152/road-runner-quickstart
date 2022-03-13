@@ -63,6 +63,8 @@ public class RedTop extends LinearOpMode {
     private Servo teamMarkerServo = null;
     private DistanceSensor dsensor = null;
 
+    private DcMotor FrontRightMotor, BackRightMotor, FrontLeftMotor, BackLeftMotor;
+
     public boolean cycleState = false;
     public double armRestingPosition = 0.4;
     public boolean outOfWearhouse = false;

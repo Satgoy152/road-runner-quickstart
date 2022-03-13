@@ -56,6 +56,8 @@ public class BlueBottom extends LinearOpMode {
     private DcMotor output = null;
     private DcMotor input = null;
 
+    private DcMotor FrontRightMotor, BackRightMotor, FrontLeftMotor, BackLeftMotor;
+
     private Servo output2 = null;
     private CRServo carouselArm = null;
     private Servo teamMarkerServo = null;
@@ -96,6 +98,28 @@ public class BlueBottom extends LinearOpMode {
 
 
     }
+
+    public void forward()
+    {
+        FrontLeftMotor = hardwareMap.get(DcMotor.class, "FrontLeftMotor");
+        FrontRightMotor = hardwareMap.get(DcMotor.class, "FrontRightMotor");
+        BackRightMotor = hardwareMap.get(DcMotor.class, "BackRightMotor");
+        BackLeftMotor = hardwareMap.get(DcMotor.class, "BackLeftMotor");
+
+        FrontLeftMotor.setPower(0.6);
+        FrontRightMotor.setPower(-0.6);
+        BackLeftMotor.setPower(0.6);
+        BackRightMotor.setPower(-0.6);
+
+        sleep(2000);
+
+        FrontLeftMotor.setPower(0);
+        FrontRightMotor.setPower(0);
+        BackLeftMotor.setPower(0);
+        BackRightMotor.setPower(0);
+
+    }
+
     public void first() {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         teamMarkerMotor = hardwareMap.get(DcMotor.class, "TeamMarkerMotor");
@@ -109,21 +133,20 @@ public class BlueBottom extends LinearOpMode {
         Pose2d startPose = new Pose2d(0 , 0, Math.toRadians(90));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-17.5, 44, Math.toRadians(10)))
+                .lineToLinearHeading(new Pose2d(17.5, 44, Math.toRadians(300)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
-                .lineToLinearHeading(new Pose2d(-19, 20, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-19, 20, Math.toRadians(300)))
                 .build();
         Trajectory Traj3 = drivetrain.trajectoryBuilder(Traj2.end())
-                .lineToLinearHeading(new Pose2d(-32,-21, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
+                .lineToLinearHeading(new Pose2d(-32,-21, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
                         SampleMecanumDrive.getAccelerationConstraint(50))
                 .build();
         Trajectory Traj4 = drivetrain.trajectoryBuilder(Traj3.end())
-                .lineToLinearHeading(new Pose2d(-32,22, Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(35, 238.72114843277868, 11.326),
-                        SampleMecanumDrive.getAccelerationConstraint(50))
+                .forward(10)
                 .build();
         Trajectory Traj5 = drivetrain.trajectoryBuilder(Traj4.end())
-                .lineToLinearHeading(new Pose2d(-32,39, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-32,39, Math.toRadians(180)))
                 .build();
 
         // start of auto
