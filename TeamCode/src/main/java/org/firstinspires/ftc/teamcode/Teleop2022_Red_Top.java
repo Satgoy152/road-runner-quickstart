@@ -205,6 +205,7 @@ public class Teleop2022_Red_Top extends LinearOpMode{
             if(gamepad2.y && outOfWearhouse){
                 outOfWearhouse = false;
                 armState = 1;
+                sleep(500);
                 drivetrain.followTrajectory(Traj3);
                 drivetrain.followTrajectory(Traj4);
 

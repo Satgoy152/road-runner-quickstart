@@ -162,7 +162,7 @@ public class RedBottom extends LinearOpMode {
         Pose2d startPose = new Pose2d(0 , 0, Math.toRadians(90));
         // building the trajectories
         Trajectory Traj1 = drivetrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(17.5, 44, Math.toRadians(170)))
+                .lineToLinearHeading(new Pose2d(17.5, 42, Math.toRadians(170)))
                 .build();
         Trajectory Traj2 = drivetrain.trajectoryBuilder(Traj1.end())
                 .lineToLinearHeading(new Pose2d(19, 20, Math.toRadians(180)))

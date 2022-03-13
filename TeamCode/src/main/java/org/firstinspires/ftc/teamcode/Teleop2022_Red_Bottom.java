@@ -190,8 +190,6 @@ public class Teleop2022_Red_Bottom extends LinearOpMode{
                     .lineToLinearHeading(new Pose2d(4 , 3, Math.toRadians(-60)))
                     .build();
 
-
-
             if(gamepad1.dpad_up && !outOfWearhouse){
                 outOfWearhouse = true;
                 armState = 2;
